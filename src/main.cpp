@@ -1,7 +1,18 @@
 #include <SDL.h>
 #include <iostream>
+#include <cstring>
 
 int main(int argc, char** argv) {
+    // Input validation for command line arguments
+    if (argc > 1) {
+        for (int i = 1; i < argc; ++i) {
+            if (argv[i] && std::strlen(argv[i]) > 1024) {
+                std::cerr << "Error: Command line argument too long" << std::endl;
+                return 1;
+            }
+        }
+    }
+
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_EVENTS) != 0) {
         std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
         return 1;
