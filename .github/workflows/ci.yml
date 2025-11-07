@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup dependencies (Linux/macOS/Windows)
+        run: |
+          if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+            sudo apt-get update
+            sudo apt-get install -y build-essential cmake libsdl2-dev
+          elif [ "${{ matrix.os }}" = "macos-latest" ]; then
+            brew update
+            brew install cmake sdl2 || true
+          else
+            # Windows: attempt to install SDL2 via vcpkg if available or skip.
+            echo "Windows runner: ensure SDL2 is available or use vcpkg to install."
+          fi
+
+      - name: Configure
+        run: |
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: |
+          cmake --build build --config Release -- -j
+
+      - name: Basic smoke test (binary exists)
+        run: |
+          if [ -f build/omega-engine ] || [ -f build/Release/omega-engine.exe ]; then
+            echo "Build artifact found"
+          else
+            echo "Build artifact not found" && exit 1
+          fi
