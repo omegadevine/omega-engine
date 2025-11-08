@@ -17,6 +17,7 @@ set(SOURCES
     Scene.cpp
     SceneManager.cpp
     ExampleScenes.cpp
+    Audio.cpp
 )
 
 set(HEADERS
@@ -34,6 +35,7 @@ set(HEADERS
     Scene.h
     SceneManager.h
     ExampleScenes.h
+    Audio.h
     stb_image.h
 )
 
@@ -43,6 +45,10 @@ add_executable(omega-engine ${SOURCES} ${HEADERS})
 # Find SDL2 (system packages)
 find_package(SDL2 CONFIG REQUIRED)
 target_link_libraries(omega-engine PRIVATE SDL2::SDL2main SDL2::SDL2)
+
+# Find SDL2_mixer
+find_package(SDL2_mixer CONFIG REQUIRED)
+target_link_libraries(omega-engine PRIVATE $<IF:$<TARGET_EXISTS:SDL2_mixer::SDL2_mixer>,SDL2_mixer::SDL2_mixer,SDL2_mixer::SDL2_mixer-static>)
 
 # Find OpenGL
 find_package(OpenGL REQUIRED)

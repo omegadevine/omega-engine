@@ -36,6 +36,7 @@ Features
 - ✅ Sprite animation system
 - ✅ Collision detection (AABB, Circle)
 - ✅ Scene management with transitions
+- ✅ Audio system (music and sound effects)
 - ✅ 2D sprite rendering system
 - ✅ Entity Component System (ECS)
 - ✅ Input abstraction (keyboard & mouse)
@@ -106,6 +107,17 @@ Scene Management
 - onEnter, onExit, onPause, onResume callbacks
 - Clean separation of game states
 
+Audio System
+- SDL_mixer integration
+- Music playback with looping
+- Sound effect management
+- Volume control (music and SFX separate)
+- Fade in/out effects
+- Play, pause, resume, stop controls
+- Multiple simultaneous sounds (16 channels)
+- Music and sound effect caching
+- OGG, WAV, MP3 support
+
 Sprite System
 - Texture-mapped 2D sprites
 - Per-sprite color tinting
@@ -139,7 +151,7 @@ Roadmap
 - [x] Sprite animation system
 - [x] Collision detection (AABB, Circle)
 - [x] Scene management
-- [ ] Audio system (SDL_mixer)
+- [x] Audio system (SDL_mixer)
 - [ ] Particle system
 - [ ] UI system (buttons, labels, panels)
 - [ ] Scripting (Lua)

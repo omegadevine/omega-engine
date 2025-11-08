@@ -1,5 +1,6 @@
 #include "ExampleScenes.h"
 #include "SceneManager.h"
+#include "Audio.h"
 #include <iostream>
 #include <cmath>
 
@@ -17,6 +18,13 @@ void MenuScene::onEnter() {
     std::cout << "MenuScene: Entered" << std::endl;
     m_selectedOption = 0;
     m_time = 0.0f;
+    
+    // Play menu music (if loaded)
+    AudioManager& audio = AudioManager::getInstance();
+    if (audio.isInitialized()) {
+        // In a real game, you'd have loaded music files
+        // audio.playMusic("menu_music", -1);
+    }
 }
 
 void MenuScene::onExit() {
@@ -24,17 +32,21 @@ void MenuScene::onExit() {
 }
 
 void MenuScene::handleInput(Input& input) {
+    AudioManager& audio = AudioManager::getInstance();
+    
     if (input.isKeyJustPressed(KeyCode::Up)) {
         m_selectedOption = (m_selectedOption - 1 + 2) % 2;
+        // audio.playSound("menu_move"); // Navigation sound
     }
     if (input.isKeyJustPressed(KeyCode::Down)) {
         m_selectedOption = (m_selectedOption + 1) % 2;
+        // audio.playSound("menu_move");
     }
     if (input.isKeyJustPressed(KeyCode::Enter) || input.isKeyJustPressed(KeyCode::Space)) {
+        // audio.playSound("menu_select"); // Selection sound
         if (m_selectedOption == 0) {
             m_sceneManager->changeScene("Game");
         } else if (m_selectedOption == 1) {
-            // Quit (handled by main loop)
             std::cout << "MenuScene: Quit selected" << std::endl;
         }
     }
@@ -74,6 +86,12 @@ GameScene::GameScene()
 
 void GameScene::onEnter() {
     std::cout << "GameScene: Entered" << std::endl;
+    
+    // Play game music
+    AudioManager& audio = AudioManager::getInstance();
+    if (audio.isInitialized()) {
+        // audio.playMusic("game_music", -1);
+    }
     
     // Initialize collision system
     m_collisionSystem = std::make_unique<CollisionSystem>(m_ecs.get());

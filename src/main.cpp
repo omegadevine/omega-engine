@@ -8,6 +8,7 @@
 #include "AssetManager.h"
 #include "SceneManager.h"
 #include "ExampleScenes.h"
+#include "Audio.h"
 
 int main(int argc, char** argv) {
     // Input validation for command line arguments
@@ -29,7 +30,7 @@ int main(int argc, char** argv) {
     const int SCREEN_HEIGHT = 600;
 
     SDL_Window* window = SDL_CreateWindow(
-        "omega-engine - Scene Management Demo",
+        "omega-engine - Complete Demo",
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
         SCREEN_WIDTH, SCREEN_HEIGHT,
@@ -99,6 +100,20 @@ int main(int argc, char** argv) {
         std::cerr << "Warning: Failed to load texture, continuing anyway" << std::endl;
     }
 
+    // Initialize Audio System
+    AudioManager& audio = AudioManager::getInstance();
+    if (!audio.initialize()) {
+        std::cerr << "Warning: Failed to initialize audio, continuing without sound" << std::endl;
+    } else {
+        // In a real game, you would load audio files here:
+        // audio.loadMusic("menu_music", "assets/music/menu.ogg");
+        // audio.loadMusic("game_music", "assets/music/game.ogg");
+        // audio.loadSound("menu_move", "assets/sfx/menu_move.wav");
+        // audio.loadSound("menu_select", "assets/sfx/menu_select.wav");
+        // audio.setMusicVolume(64);  // 50% volume
+        // audio.setSoundVolume(96);  // 75% volume
+    }
+
     // Create Scene Manager
     SceneManager sceneManager;
     
@@ -114,7 +129,7 @@ int main(int argc, char** argv) {
     SDL_Event event;
     float deltaTime = 0.016f; // ~60fps
 
-    std::cout << "=== omega-engine Scene Management Demo ===" << std::endl;
+    std::cout << "=== omega-engine Complete Demo ===" << std::endl;
     std::cout << "Controls:" << std::endl;
     std::cout << "  [MENU] Up/Down - Navigate, Enter/Space - Select" << std::endl;
     std::cout << "  [GAME] WASD/Arrows - Move, ESC - Pause" << std::endl;
@@ -122,6 +137,7 @@ int main(int argc, char** argv) {
     std::cout << "Loaded Textures: " << assets.getTextureCount() << std::endl;
     std::cout << "Loaded Shaders: " << assets.getShaderCount() << std::endl;
     std::cout << "Registered Scenes: 3 (Menu, Game, Pause)" << std::endl;
+    std::cout << "Audio System: " << (audio.isInitialized() ? "Initialized" : "Not available") << std::endl;
     std::cout << std::endl;
 
     while (running) {
@@ -154,6 +170,9 @@ int main(int argc, char** argv) {
     }
 
     std::cout << "\nShutting down..." << std::endl;
+    
+    // Clean up audio
+    audio.shutdown();
     
     // Clean up assets
     assets.unloadAll();
