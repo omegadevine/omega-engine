@@ -9,6 +9,7 @@
 #include "ECS.h"
 #include "Input.h"
 #include "AssetManager.h"
+#include "Camera.h"
 
 int main(int argc, char** argv) {
     // Input validation for command line arguments
@@ -30,7 +31,7 @@ int main(int argc, char** argv) {
     const int SCREEN_HEIGHT = 600;
 
     SDL_Window* window = SDL_CreateWindow(
-        "omega-engine - Asset Manager Demo",
+        "omega-engine - Camera Demo",
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
         SCREEN_WIDTH, SCREEN_HEIGHT,
@@ -103,6 +104,11 @@ int main(int argc, char** argv) {
     // Create ECS
     ECS ecs;
 
+    // Create Camera
+    Camera camera(static_cast<float>(SCREEN_WIDTH), static_cast<float>(SCREEN_HEIGHT));
+    camera.setFollowSpeed(3.0f);
+    camera.setBounds(0, 0, 1600, 1200); // World is 2x screen size
+
     // Create player entity
     Entity player = ecs.createEntity();
     auto* playerTransform = ecs.addComponent<Transform>(player);
@@ -139,14 +145,19 @@ int main(int argc, char** argv) {
     bool running = true;
     SDL_Event event;
     float time = 0.0f;
+    float deltaTime = 0.016f; // ~60fps
 
-    std::cout << "=== omega-engine Asset Manager Demo ===" << std::endl;
+    std::cout << "=== omega-engine Camera Demo ===" << std::endl;
     std::cout << "Controls:" << std::endl;
     std::cout << "  WASD / Arrow Keys - Move player" << std::endl;
+    std::cout << "  Q/E - Zoom Out/In" << std::endl;
+    std::cout << "  SPACE - Screen Shake" << std::endl;
+    std::cout << "  R - Reset Camera" << std::endl;
     std::cout << "  ESC - Quit" << std::endl;
     std::cout << "Entities: " << ecs.getEntities().size() << std::endl;
     std::cout << "Loaded Textures: " << assets.getTextureCount() << std::endl;
     std::cout << "Loaded Shaders: " << assets.getShaderCount() << std::endl;
+    std::cout << "World Size: 1600x1200 (camera follows player)" << std::endl;
 
     while (running) {
         Input& input = Input::getInstance();
@@ -160,7 +171,21 @@ int main(int argc, char** argv) {
             running = false;
         }
 
-        // Update player movement
+        // Camera controls
+        if (input.isKeyJustPressed(KeyCode::Space)) {
+            camera.shake(20.0f, 0.3f); // Shake with intensity 20 for 0.3 seconds
+        }
+        if (input.isKeyPressed(KeyCode::Q)) {
+            camera.zoomOut(0.01f);
+        }
+        if (input.isKeyPressed(KeyCode::E)) {
+            camera.zoomIn(0.01f);
+        }
+        if (input.isKeyJustPressed(KeyCode::R)) {
+            camera.reset();
+        }
+
+        // Update player movement (now in world space)
         const float moveSpeed = 3.0f;
         if (input.isKeyPressed(KeyCode::W) || input.isKeyPressed(KeyCode::Up)) {
             playerTransform->position.y -= moveSpeed;
@@ -175,13 +200,20 @@ int main(int argc, char** argv) {
             playerTransform->position.x += moveSpeed;
         }
 
-        // Keep player in bounds
+        // Keep player in world bounds (not screen bounds!)
         if (playerTransform->position.x < 0) playerTransform->position.x = 0;
         if (playerTransform->position.y < 0) playerTransform->position.y = 0;
-        if (playerTransform->position.x > SCREEN_WIDTH - 64) 
-            playerTransform->position.x = SCREEN_WIDTH - 64;
-        if (playerTransform->position.y > SCREEN_HEIGHT - 64) 
-            playerTransform->position.y = SCREEN_HEIGHT - 64;
+        if (playerTransform->position.x > 1600 - 64) 
+            playerTransform->position.x = 1600 - 64;
+        if (playerTransform->position.y > 1200 - 64) 
+            playerTransform->position.y = 1200 - 64;
+
+        // Camera follows player
+        camera.follow(Vector2(
+            playerTransform->position.x + 32, // Center on player
+            playerTransform->position.y + 32
+        ));
+        camera.update(deltaTime);
 
         // Update floaters (sine wave animation)
         time += 0.02f;
@@ -196,14 +228,14 @@ int main(int argc, char** argv) {
         // Render
         renderer.clear(0.1f, 0.1f, 0.15f, 1.0f);
 
-        // Render all sprites using the cached shader
+        // Render all sprites using camera
         for (Entity entity : ecs.getEntities()) {
             auto* transform = ecs.getComponent<Transform>(entity);
             auto* spriteComp = ecs.getComponent<SpriteComponent>(entity);
             
             if (transform && spriteComp && spriteComp->visible) {
                 spriteComp->sprite.setPosition(transform->position);
-                spriteComp->sprite.draw(spriteShader, SCREEN_WIDTH, SCREEN_HEIGHT);
+                spriteComp->sprite.drawWithCamera(spriteShader, &camera, SCREEN_WIDTH, SCREEN_HEIGHT);
             }
         }
 

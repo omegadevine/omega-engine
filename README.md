@@ -32,6 +32,7 @@ Features
 - ✅ GLSL shader compilation and management
 - ✅ Texture loading with stb_image
 - ✅ Asset Manager for resource management
+- ✅ Camera system with follow and zoom
 - ✅ 2D sprite rendering system
 - ✅ Entity Component System (ECS)
 - ✅ Input abstraction (keyboard & mouse)
@@ -62,6 +63,14 @@ Asset Manager
 - Memory-efficient asset sharing
 - Prevents duplicate loads
 
+Camera System
+- 2D camera with position and zoom control
+- Smooth camera following with configurable speed
+- World bounds support
+- Screen shake effects
+- World/screen coordinate transformations
+- Perfect for scrolling games
+
 Sprite System
 - Texture-mapped 2D sprites
 - Per-sprite color tinting
@@ -91,7 +100,7 @@ Roadmap
 - [x] Entity Component System (ECS)
 - [x] Input abstraction layer
 - [x] Asset Manager for resource management
-- [ ] Camera system with follow and zoom
+- [x] Camera system with follow and zoom
 - [ ] Sprite animation system
 - [ ] Collision detection (AABB, Circle)
 - [ ] Scene management

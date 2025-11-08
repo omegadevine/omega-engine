@@ -10,6 +10,7 @@ set(SOURCES
     ECS.cpp
     Input.cpp
     AssetManager.cpp
+    Camera.cpp
 )
 
 set(HEADERS
@@ -20,6 +21,7 @@ set(HEADERS
     ECS.h
     Input.h
     AssetManager.h
+    Camera.h
     stb_image.h
 )
 

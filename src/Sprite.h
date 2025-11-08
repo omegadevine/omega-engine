@@ -30,6 +30,7 @@ public:
     Vector2 getSize() const { return m_size; }
     
     void draw(Shader* shader, int screenWidth, int screenHeight);
+    void drawWithCamera(Shader* shader, class Camera* camera, int screenWidth, int screenHeight);
 
 private:
     void setupBuffers();
