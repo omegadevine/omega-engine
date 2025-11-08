@@ -43,6 +43,9 @@ Features
 - ✅ Text rendering (bitmap fonts)
 - ✅ Debug visualization and profiling
 - ✅ Asset pipeline and hot reloading
+- ✅ Physics system (Box2D integration ready)
+- ✅ Networking (client/server architecture)
+- ✅ Scripting (Lua integration ready)
 - ✅ 2D sprite rendering system
 - ✅ Entity Component System (ECS)
 - ✅ Input abstraction (keyboard & mouse)
@@ -201,6 +204,52 @@ Asset Pipeline System
 - Compression and encryption support
 - File listing and management
 
+Physics System (Box2D stub)
+- PhysicsWorld with gravity simulation
+- PhysicsBody wrapper (Static, Dynamic, Kinematic)
+- Shape support (Box, Circle, Polygon)
+- Force, impulse, and torque application
+- Linear and angular velocity control
+- Mass and gravity scale properties
+- Collision callbacks (begin, end, sensor)
+- Raycast queries (single and multiple)
+- AABB query for spatial searches
+- Fixed timestep physics simulation
+- PhysicsComponent for ECS integration
+- PhysicsSystem for automatic sync
+- Debug visualization support
+- Extensible for Box2D integration
+
+Networking System
+- NetworkClient for client-side networking
+- NetworkServer for server hosting
+- Packet-based message system
+- Message types (Connect, Disconnect, GameState, etc.)
+- Client management and heartbeats
+- Network statistics tracking
+- Serialization utilities (int, float, string)
+- NetworkManager singleton
+- NetworkReplication for synced objects
+- Entity replication over network
+- Transform synchronization
+- Configurable update rates
+- Ready for ENet/SDL_net integration
+
+Scripting System (Lua stub)
+- ScriptEngine singleton
+- Script loading and execution
+- Function registration and calling
+- Variable registration (int, float, string)
+- Stack operations for Lua interop
+- ScriptComponent for entities
+- ScriptSystem for ECS integration
+- Event system for game logic
+- Engine API bindings
+- Vector2, Color, Transform bindings
+- Input and Audio script access
+- Example Lua C function bindings
+- Ready for Lua 5.4 integration
+
 Sprite System
 - Texture-mapped 2D sprites
 - Per-sprite color tinting
@@ -241,7 +290,10 @@ Roadmap
 - [x] Text rendering (bitmap fonts)
 - [x] Debug tools (profiler, visualizer, console)
 - [x] Asset pipeline (processors, hot reload, bundler)
-- [ ] Scripting (Lua)
+- [x] Physics integration (Box2D-ready wrapper)
+- [x] Networking (client/server, replication)
+- [x] Scripting (Lua-ready engine)
+- [ ] Advanced rendering (shaders, post-processing)
 - [ ] Physics integration (Box2D)
 - [ ] Tilemap renderer
 - [ ] Save/Load system

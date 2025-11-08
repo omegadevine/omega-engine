@@ -24,6 +24,9 @@ set(SOURCES
     Text.cpp
     Debug.cpp
     AssetPipeline.cpp
+    Physics.cpp
+    Networking.cpp
+    Scripting.cpp
 )
 
 set(HEADERS
@@ -48,6 +51,9 @@ set(HEADERS
     Text.h
     Debug.h
     AssetPipeline.h
+    Physics.h
+    Networking.h
+    Scripting.h
     stb_image.h
 )
 
