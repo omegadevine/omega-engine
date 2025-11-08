@@ -35,6 +35,7 @@ Features
 - ✅ Camera system with follow and zoom
 - ✅ Sprite animation system
 - ✅ Collision detection (AABB, Circle)
+- ✅ Scene management with transitions
 - ✅ 2D sprite rendering system
 - ✅ Entity Component System (ECS)
 - ✅ Input abstraction (keyboard & mouse)
@@ -95,6 +96,16 @@ Collision Detection
 - Query functions (radius, box searches)
 - Performance statistics
 
+Scene Management
+- Scene base class with lifecycle hooks
+- Scene stack for layered scenes (menus, pause, etc.)
+- Scene transitions (change, push, pop)
+- Per-scene ECS and collision systems
+- Scene factory registration
+- Automatic state management
+- onEnter, onExit, onPause, onResume callbacks
+- Clean separation of game states
+
 Sprite System
 - Texture-mapped 2D sprites
 - Per-sprite color tinting
@@ -127,7 +138,7 @@ Roadmap
 - [x] Camera system with follow and zoom
 - [x] Sprite animation system
 - [x] Collision detection (AABB, Circle)
-- [ ] Scene management
+- [x] Scene management
 - [ ] Audio system (SDL_mixer)
 - [ ] Particle system
 - [ ] UI system (buttons, labels, panels)
@@ -138,17 +149,18 @@ Roadmap
 
 Demo Application
 The included demo showcases:
+- Scene management with Menu, Game, and Pause scenes
+- Scene transitions and scene stack
 - Player-controlled animated sprite (WASD/Arrow keys)
 - Automatic animation switching (idle <-> walk)
 - Collision detection with static obstacles
 - AABB and Circle colliders
 - Collision resolution (player bounces off obstacles)
-- Multiple animated sprites with sine wave motion
 - Camera following with smooth movement
 - ECS-based entity management
 - Texture rendering with color tinting
-- Input handling
-- Zoom and screen shake effects
+- Input handling across multiple scenes
+- Pause menu with resume/restart/quit options
 
 Contributing
 See CONTRIBUTING.md

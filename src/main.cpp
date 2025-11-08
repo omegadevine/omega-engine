@@ -1,20 +1,170 @@
 #include <SDL.h>
 #include <iostream>
 #include <cstring>
-#include <cmath>
 #include "Renderer.h"
 #include "Shader.h"
 #include "Texture.h"
-#include "Sprite.h"
-#include "ECS.h"
 #include "Input.h"
 #include "AssetManager.h"
-#include "Camera.h"
-#include "AnimatedSprite.h"
-#include "Animation.h"
-#include "Collision.h"
+#include "SceneManager.h"
+#include "ExampleScenes.h"
 
 int main(int argc, char** argv) {
+    // Input validation for command line arguments
+    if (argc > 1) {
+        for (int i = 1; i < argc; ++i) {
+            if (argv[i] && std::strlen(argv[i]) > 1024) {
+                std::cerr << "Error: Command line argument too long" << std::endl;
+                return 1;
+            }
+        }
+    }
+
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_EVENTS) != 0) {
+        std::cerr << "SDL_Init Error: " << SDL_GetError() << std::endl;
+        return 1;
+    }
+
+    const int SCREEN_WIDTH = 800;
+    const int SCREEN_HEIGHT = 600;
+
+    SDL_Window* window = SDL_CreateWindow(
+        "omega-engine - Scene Management Demo",
+        SDL_WINDOWPOS_CENTERED,
+        SDL_WINDOWPOS_CENTERED,
+        SCREEN_WIDTH, SCREEN_HEIGHT,
+        SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN
+    );
+
+    if (!window) {
+        std::cerr << "SDL_CreateWindow Error: " << SDL_GetError() << std::endl;
+        SDL_Quit();
+        return 1;
+    }
+
+    // Initialize renderer
+    Renderer renderer(window);
+    if (!renderer.initialize()) {
+        std::cerr << "Failed to initialize renderer" << std::endl;
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return 1;
+    }
+
+    // Get Asset Manager instance
+    AssetManager& assets = AssetManager::getInstance();
+
+    // Load sprite shader using Asset Manager
+    const std::string vertexShaderSource = R"(
+        #version 330 core
+        layout(location = 0) in vec2 aPos;
+        layout(location = 1) in vec2 aTexCoord;
+        
+        uniform vec2 position;
+        uniform vec2 size;
+        
+        out vec2 TexCoord;
+        
+        void main() {
+            vec2 scaledPos = aPos * size + position;
+            gl_Position = vec4(scaledPos, 0.0, 1.0);
+            TexCoord = aTexCoord;
+        }
+    )";
+    
+    const std::string fragmentShaderSource = R"(
+        #version 330 core
+        in vec2 TexCoord;
+        out vec4 FragColor;
+        
+        uniform sampler2D image;
+        uniform vec4 spriteColor;
+        
+        void main() {
+            FragColor = texture(image, TexCoord) * spriteColor;
+        }
+    )";
+
+    Shader* spriteShader = assets.loadShader("sprite_shader", vertexShaderSource, fragmentShaderSource);
+    if (!spriteShader) {
+        std::cerr << "Failed to load sprite shader" << std::endl;
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return 1;
+    }
+
+    // Load texture using Asset Manager
+    Texture* testTexture = assets.loadTexture("test_pattern", "test.png");
+    if (!testTexture) {
+        std::cerr << "Warning: Failed to load texture, continuing anyway" << std::endl;
+    }
+
+    // Create Scene Manager
+    SceneManager sceneManager;
+    
+    // Register scenes
+    sceneManager.registerScene("Menu", []() { return std::make_unique<MenuScene>(); });
+    sceneManager.registerScene("Game", []() { return std::make_unique<GameScene>(); });
+    sceneManager.registerScene("Pause", []() { return std::make_unique<PauseScene>(); });
+    
+    // Start with menu scene
+    sceneManager.changeScene("Menu");
+
+    bool running = true;
+    SDL_Event event;
+    float deltaTime = 0.016f; // ~60fps
+
+    std::cout << "=== omega-engine Scene Management Demo ===" << std::endl;
+    std::cout << "Controls:" << std::endl;
+    std::cout << "  [MENU] Up/Down - Navigate, Enter/Space - Select" << std::endl;
+    std::cout << "  [GAME] WASD/Arrows - Move, ESC - Pause" << std::endl;
+    std::cout << "  [PAUSE] Up/Down - Navigate, Enter/Space - Select, ESC - Resume" << std::endl;
+    std::cout << "Loaded Textures: " << assets.getTextureCount() << std::endl;
+    std::cout << "Loaded Shaders: " << assets.getShaderCount() << std::endl;
+    std::cout << "Registered Scenes: 3 (Menu, Game, Pause)" << std::endl;
+    std::cout << std::endl;
+
+    while (running) {
+        Input& input = Input::getInstance();
+        
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) running = false;
+            input.update(event);
+        }
+
+        // Global escape to quit (in menu)
+        if (input.isKeyPressed(KeyCode::Escape)) {
+            Scene* current = sceneManager.getCurrentScene();
+            if (current && current->getName() == "Menu") {
+                running = false;
+            }
+        }
+
+        // Update scene manager
+        sceneManager.handleInput(input);
+        sceneManager.update(deltaTime);
+        
+        // Render current scene
+        sceneManager.render(renderer);
+        
+        renderer.present();
+        input.endFrame();
+
+        SDL_Delay(16); // ~60fps
+    }
+
+    std::cout << "\nShutting down..." << std::endl;
+    
+    // Clean up assets
+    assets.unloadAll();
+    
+    // Scene manager automatically cleans up
+    sceneManager.clearSceneStack();
+
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+    return 0;
+}
     // Input validation for command line arguments
     if (argc > 1) {
         for (int i = 1; i < argc; ++i) {

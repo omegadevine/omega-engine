@@ -14,6 +14,9 @@ set(SOURCES
     Animation.cpp
     AnimatedSprite.cpp
     Collision.cpp
+    Scene.cpp
+    SceneManager.cpp
+    ExampleScenes.cpp
 )
 
 set(HEADERS
@@ -28,6 +31,9 @@ set(HEADERS
     Animation.h
     AnimatedSprite.h
     Collision.h
+    Scene.h
+    SceneManager.h
+    ExampleScenes.h
     stb_image.h
 )
 
