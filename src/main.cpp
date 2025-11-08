@@ -10,6 +10,8 @@
 #include "Input.h"
 #include "AssetManager.h"
 #include "Camera.h"
+#include "AnimatedSprite.h"
+#include "Animation.h"
 
 int main(int argc, char** argv) {
     // Input validation for command line arguments
@@ -31,7 +33,7 @@ int main(int argc, char** argv) {
     const int SCREEN_HEIGHT = 600;
 
     SDL_Window* window = SDL_CreateWindow(
-        "omega-engine - Camera Demo",
+        "omega-engine - Animation Demo",
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
         SCREEN_WIDTH, SCREEN_HEIGHT,
@@ -109,6 +111,31 @@ int main(int argc, char** argv) {
     camera.setFollowSpeed(3.0f);
     camera.setBounds(0, 0, 1600, 1200); // World is 2x screen size
 
+    // Create animated player sprite
+    AnimatedSprite playerAnimSprite;
+    playerAnimSprite.setTexture(testTexture);
+    playerAnimSprite.setSize(Vector2(64, 64));
+    playerAnimSprite.setColor(Color(0.3f, 0.7f, 1.0f, 1.0f));
+    
+    // Create animations (simple example with procedural frames)
+    Animation idleAnim("idle");
+    idleAnim.setFrameDuration(0.2f);
+    idleAnim.setLoop(true);
+    for (int i = 0; i < 4; i++) {
+        idleAnim.addFrame(i * 64, 0, 64, 64); // 4 frames horizontally
+    }
+    playerAnimSprite.addAnimation("idle", idleAnim);
+    
+    Animation walkAnim("walk");
+    walkAnim.setFrameDuration(0.1f);
+    walkAnim.setLoop(true);
+    for (int i = 0; i < 6; i++) {
+        walkAnim.addFrame(i * 64, 64, 64, 64); // 6 frames on second row
+    }
+    playerAnimSprite.addAnimation("walk", walkAnim);
+    
+    playerAnimSprite.play("idle");
+
     // Create player entity
     Entity player = ecs.createEntity();
     auto* playerTransform = ecs.addComponent<Transform>(player);
@@ -146,10 +173,11 @@ int main(int argc, char** argv) {
     SDL_Event event;
     float time = 0.0f;
     float deltaTime = 0.016f; // ~60fps
+    bool isMoving = false;
 
-    std::cout << "=== omega-engine Camera Demo ===" << std::endl;
+    std::cout << "=== omega-engine Animation Demo ===" << std::endl;
     std::cout << "Controls:" << std::endl;
-    std::cout << "  WASD / Arrow Keys - Move player" << std::endl;
+    std::cout << "  WASD / Arrow Keys - Move player (walk animation)" << std::endl;
     std::cout << "  Q/E - Zoom Out/In" << std::endl;
     std::cout << "  SPACE - Screen Shake" << std::endl;
     std::cout << "  R - Reset Camera" << std::endl;
@@ -158,6 +186,7 @@ int main(int argc, char** argv) {
     std::cout << "Loaded Textures: " << assets.getTextureCount() << std::endl;
     std::cout << "Loaded Shaders: " << assets.getShaderCount() << std::endl;
     std::cout << "World Size: 1600x1200 (camera follows player)" << std::endl;
+    std::cout << "Animation: Idle <-> Walk (automatic)" << std::endl;
 
     while (running) {
         Input& input = Input::getInstance();
@@ -187,17 +216,34 @@ int main(int argc, char** argv) {
 
         // Update player movement (now in world space)
         const float moveSpeed = 3.0f;
+        isMoving = false;
+        
         if (input.isKeyPressed(KeyCode::W) || input.isKeyPressed(KeyCode::Up)) {
             playerTransform->position.y -= moveSpeed;
+            isMoving = true;
         }
         if (input.isKeyPressed(KeyCode::S) || input.isKeyPressed(KeyCode::Down)) {
             playerTransform->position.y += moveSpeed;
+            isMoving = true;
         }
         if (input.isKeyPressed(KeyCode::A) || input.isKeyPressed(KeyCode::Left)) {
             playerTransform->position.x -= moveSpeed;
+            isMoving = true;
         }
         if (input.isKeyPressed(KeyCode::D) || input.isKeyPressed(KeyCode::Right)) {
             playerTransform->position.x += moveSpeed;
+            isMoving = true;
+        }
+        
+        // Switch animations based on movement
+        if (isMoving) {
+            if (playerAnimSprite.getCurrentAnimation() != "walk") {
+                playerAnimSprite.play("walk");
+            }
+        } else {
+            if (playerAnimSprite.getCurrentAnimation() != "idle") {
+                playerAnimSprite.play("idle");
+            }
         }
 
         // Keep player in world bounds (not screen bounds!)
@@ -214,6 +260,10 @@ int main(int argc, char** argv) {
             playerTransform->position.y + 32
         ));
         camera.update(deltaTime);
+        
+        // Update animated sprite
+        playerAnimSprite.setPosition(playerTransform->position);
+        playerAnimSprite.update(deltaTime);
 
         // Update floaters (sine wave animation)
         time += 0.02f;
@@ -228,12 +278,18 @@ int main(int argc, char** argv) {
         // Render
         renderer.clear(0.1f, 0.1f, 0.15f, 1.0f);
 
-        // Render all sprites using camera
+        // Render animated player sprite
+        playerAnimSprite.drawWithCamera(spriteShader, &camera, SCREEN_WIDTH, SCREEN_HEIGHT);
+        
+        // Render other sprites using camera
         for (Entity entity : ecs.getEntities()) {
             auto* transform = ecs.getComponent<Transform>(entity);
             auto* spriteComp = ecs.getComponent<SpriteComponent>(entity);
             
             if (transform && spriteComp && spriteComp->visible) {
+                // Skip player entity since we're rendering it with animation
+                if (entity == player) continue;
+                
                 spriteComp->sprite.setPosition(transform->position);
                 spriteComp->sprite.drawWithCamera(spriteShader, &camera, SCREEN_WIDTH, SCREEN_HEIGHT);
             }

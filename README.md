@@ -33,6 +33,7 @@ Features
 - ✅ Texture loading with stb_image
 - ✅ Asset Manager for resource management
 - ✅ Camera system with follow and zoom
+- ✅ Sprite animation system
 - ✅ 2D sprite rendering system
 - ✅ Entity Component System (ECS)
 - ✅ Input abstraction (keyboard & mouse)
@@ -71,6 +72,16 @@ Camera System
 - World/screen coordinate transformations
 - Perfect for scrolling games
 
+Animation System
+- Frame-based sprite animations
+- Multiple animations per sprite
+- Configurable frame duration
+- Loop and one-shot animations
+- Animation state management (play, pause, stop)
+- Animation complete callbacks
+- Sprite sheet support
+- Smooth animation transitions
+
 Sprite System
 - Texture-mapped 2D sprites
 - Per-sprite color tinting
@@ -101,7 +112,7 @@ Roadmap
 - [x] Input abstraction layer
 - [x] Asset Manager for resource management
 - [x] Camera system with follow and zoom
-- [ ] Sprite animation system
+- [x] Sprite animation system
 - [ ] Collision detection (AABB, Circle)
 - [ ] Scene management
 - [ ] Audio system (SDL_mixer)
@@ -114,11 +125,14 @@ Roadmap
 
 Demo Application
 The included demo showcases:
-- Player-controlled sprite (WASD/Arrow keys)
+- Player-controlled animated sprite (WASD/Arrow keys)
+- Automatic animation switching (idle <-> walk)
 - Multiple animated sprites with sine wave motion
+- Camera following with smooth movement
 - ECS-based entity management
 - Texture rendering with color tinting
 - Input handling
+- Zoom and screen shake effects
 
 Contributing
 See CONTRIBUTING.md

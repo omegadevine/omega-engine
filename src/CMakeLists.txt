@@ -11,6 +11,8 @@ set(SOURCES
     Input.cpp
     AssetManager.cpp
     Camera.cpp
+    Animation.cpp
+    AnimatedSprite.cpp
 )
 
 set(HEADERS
@@ -22,6 +24,8 @@ set(HEADERS
     Input.h
     AssetManager.h
     Camera.h
+    Animation.h
+    AnimatedSprite.h
     stb_image.h
 )
 
