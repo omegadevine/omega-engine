@@ -1,7 +1,19 @@
 cmake_minimum_required(VERSION 3.15)
 
+# Source files
+set(SOURCES
+    main.cpp
+    Renderer.cpp
+    Shader.cpp
+)
+
+set(HEADERS
+    Renderer.h
+    Shader.h
+)
+
 # executable
-add_executable(omega-engine main.cpp)
+add_executable(omega-engine ${SOURCES} ${HEADERS})
 
 # Find SDL2 (system packages)
 find_package(SDL2 REQUIRED)
@@ -12,5 +24,16 @@ else()
     message(WARNING "SDL2 not found by find_package. You may need to install SDL2 development packages or modify the build to locate SDL2.")
 endif()
 
+# Find OpenGL
+find_package(OpenGL REQUIRED)
+target_link_libraries(omega-engine PRIVATE OpenGL::GL)
+
 # Basic compile flags
 target_compile_features(omega-engine PRIVATE cxx_std_17)
+
+# Enable warnings
+if(MSVC)
+    target_compile_options(omega-engine PRIVATE /W4)
+else()
+    target_compile_options(omega-engine PRIVATE -Wall -Wextra -pedantic)
+endif()

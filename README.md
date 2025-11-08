@@ -7,7 +7,7 @@ This repository contains the initial scaffolding for a cross-platform game engin
 - Language: C++17
 - Build system: CMake
 - Windowing & input: SDL2
-- Renderer: OpenGL (starter)
+- Renderer: OpenGL 3.3 Core
 - License: MIT
 
 Goals
@@ -16,14 +16,14 @@ Goals
 
 Getting started (development)
 1. Install dependencies:
-   - Linux (Ubuntu): sudo apt-get install build-essential cmake libsdl2-dev
+   - Linux (Ubuntu): sudo apt-get install build-essential cmake libsdl2-dev libgl1-mesa-dev
    - macOS: brew install cmake sdl2
-   - Windows: Install MSVC or MinGW, CMake, and SDL2 development packages (or use vcpkg)
+   - Windows: Install MSVC, CMake, and use vcpkg for SDL2: vcpkg install sdl2:x64-windows
 2. mkdir build && cd build
 3. cmake .. && cmake --build .
 
 Project Layout
-- src/            — engine source (main entry)
+- src/            — engine source (main entry, renderer, shaders)
 - assets/         — runtime assets (textures, shaders, audio)
 - external/       — third-party submodules / vendored libs (optional)
 - tests/          — unit / integration tests
@@ -32,11 +32,25 @@ Project Layout
 Roadmap (initial)
 - [x] Project scaffolding & CI
 - [x] Window + input subsystem (SDL2)
-- [ ] Renderer: clear screen, shader loader
+- [x] OpenGL initialization (3.3 Core)
+- [x] Renderer: clear screen with animated colors
+- [x] Shader system: compile, link, error handling
+- [ ] Sprite rendering system
+- [ ] Texture loading
 - [ ] Basic ECS
 - [ ] Asset pipeline
 - [ ] Scripting (Lua)
 - [ ] Physics integration (optional)
+
+Features Implemented
+- ✅ Cross-platform window creation (SDL2)
+- ✅ OpenGL 3.3 Core context
+- ✅ Basic renderer with clear color
+- ✅ GLSL shader compilation system
+- ✅ Animated background demo
+- ✅ Security scanning (CodeQL)
+- ✅ Automated backups
+- ✅ CI/CD for Linux, macOS, and Windows
 
 Contributing
 See CONTRIBUTING.md

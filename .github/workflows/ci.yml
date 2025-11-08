@@ -21,7 +21,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential cmake libsdl2-dev
+          sudo apt-get install -y build-essential cmake libsdl2-dev libgl1-mesa-dev
 
       - name: Setup dependencies (macOS)
         if: matrix.os == 'macos-latest'
@@ -29,29 +29,41 @@ jobs:
           brew update
           brew install cmake sdl2
 
-      - name: Setup dependencies (Windows)
+      - name: Setup dependencies (Windows - vcpkg)
         if: matrix.os == 'windows-latest'
         run: |
-          choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System'
-          vcpkg install sdl2:x64-windows
+          git clone https://github.com/Microsoft/vcpkg.git C:\vcpkg
+          C:\vcpkg\bootstrap-vcpkg.bat
+          C:\vcpkg\vcpkg.exe install sdl2:x64-windows
+          echo "CMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake" >> $env:GITHUB_ENV
         shell: pwsh
 
-      - name: Configure
+      - name: Configure (Unix)
+        if: matrix.os != 'windows-latest'
         run: |
           mkdir build
           cd build
           cmake .. -DCMAKE_BUILD_TYPE=Release
-        shell: bash
+
+      - name: Configure (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          mkdir build
+          cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
+        shell: pwsh
 
       - name: Build
         run: cmake --build build --config Release
-        shell: bash
 
       - name: Basic smoke test (binary exists)
         run: |
-          if [ -f build/omega-engine ] || [ -f build/Release/omega-engine.exe ]; then
-            echo "Build artifact found"
-          else
-            echo "Build artifact not found" && exit 1
-          fi
-        shell: bash
+          if (Test-Path "build/Release/omega-engine.exe") {
+            Write-Host "Windows build artifact found"
+          } elseif (Test-Path "build/omega-engine") {
+            Write-Host "Unix build artifact found"
+          } else {
+            Write-Error "Build artifact not found"
+            exit 1
+          }
+        shell: pwsh
