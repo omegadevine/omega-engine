@@ -1,0 +1,33 @@
+# DUNGEON QUEST - Omega Engine Demo
+
+A fast-paced dungeon crawler built with the Omega Engine game framework.
+
+## About This Game
+Navigate through procedurally generated dungeons, collect keys, find treasure, and battle enemies across 5 challenging levels. Features instant-responsive controls and smooth 60 FPS gameplay.
+
+## Controls
+- **WASD** - Move your character (grid-based movement)
+- **ESC** - Exit game
+- Arrow indicators show available directions
+
+## Features
+- 5 unique dungeon levels with increasing difficulty
+- Procedurally generated layouts
+- Combat system with balanced enemy encounters
+- Collectible keys and treasure
+- Health potions and power-ups
+- Instant input response for precise control
+
+## System Requirements
+- Windows 7 or higher
+- No additional dependencies required (fully standalone)
+
+## Installation
+Simply extract and run DungeonQuest.exe. No installation needed!
+
+## Credits
+Built with Omega Engine
+Developed by Omega Engine Team
+
+---
+For more information about Omega Engine, visit our GitHub repository.
