@@ -8,12 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Physics system with collision detection and rigid body dynamics
-- Networking system with client-server architecture and lobby management
-- Scripting system with Lua integration
-- Advanced examples demonstrating physics, networking, and scripting
-- Python examples and demonstrations
-- Comprehensive documentation for advanced systems
+- Advanced rendering system with post-processing effects (bloom, color grading, vignette, chromatic aberration)
+- Save/Load system with encryption, compression, and auto-save
+- Comprehensive documentation (Advanced Rendering, Save System, Performance Optimization)
+- Post-processing stack for composable effects
+- Saveable interface for automatic object persistence
+
+### Changed
+- Updated GitHub Actions: actions/checkout v4→v5, codeql-action v3→v4
+- Organized Python examples into dedicated examples/ folder
+- Enhanced .gitignore with Python-specific patterns
+
+### Fixed
+- Repository organization and workflow improvements
 
 ## [0.2.0] - 2025-11-08
 
