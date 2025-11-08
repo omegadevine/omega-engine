@@ -1,6 +1,7 @@
 #include "Shader.h"
 #include <iostream>
 #include <vector>
+#include <GL/glew.h>
 
 Shader::Shader()
     : m_programID(0) {

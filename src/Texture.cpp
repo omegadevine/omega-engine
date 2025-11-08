@@ -1,5 +1,6 @@
 #include "Texture.h"
 #include <iostream>
+#include <GL/glew.h>
 
 // For now, we'll use a simple stub implementation
 // In production, you'd use stb_image or SDL_image

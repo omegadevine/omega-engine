@@ -25,17 +25,16 @@ set(HEADERS
 add_executable(omega-engine ${SOURCES} ${HEADERS})
 
 # Find SDL2 (system packages)
-find_package(SDL2 REQUIRED)
-if (SDL2_FOUND)
-    target_include_directories(omega-engine PRIVATE ${SDL2_INCLUDE_DIRS})
-    target_link_libraries(omega-engine PRIVATE ${SDL2_LIBRARIES})
-else()
-    message(WARNING "SDL2 not found by find_package. You may need to install SDL2 development packages or modify the build to locate SDL2.")
-endif()
+find_package(SDL2 CONFIG REQUIRED)
+target_link_libraries(omega-engine PRIVATE SDL2::SDL2main SDL2::SDL2)
 
 # Find OpenGL
 find_package(OpenGL REQUIRED)
 target_link_libraries(omega-engine PRIVATE OpenGL::GL)
+
+# Find GLEW
+find_package(GLEW REQUIRED)
+target_link_libraries(omega-engine PRIVATE GLEW::GLEW)
 
 # Basic compile flags
 target_compile_features(omega-engine PRIVATE cxx_std_17)

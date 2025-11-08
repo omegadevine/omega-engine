@@ -1,5 +1,6 @@
 #include "Renderer.h"
 #include <iostream>
+#include <GL/glew.h>
 #include <SDL_opengl.h>
 
 Renderer::Renderer(SDL_Window* window)
@@ -32,6 +33,14 @@ bool Renderer::initialize() {
     m_glContext = SDL_GL_CreateContext(m_window);
     if (!m_glContext) {
         std::cerr << "Failed to create OpenGL context: " << SDL_GetError() << std::endl;
+        return false;
+    }
+
+    // Initialize GLEW
+    glewExperimental = GL_TRUE;
+    GLenum glewError = glewInit();
+    if (glewError != GLEW_OK) {
+        std::cerr << "Failed to initialize GLEW: " << glewGetErrorString(glewError) << std::endl;
         return false;
     }
 

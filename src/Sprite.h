@@ -3,7 +3,7 @@
 
 #include "Texture.h"
 #include "Shader.h"
-#include <SDL_opengl.h>
+#include <GL/glew.h>
 
 struct Vector2 {
     float x, y;

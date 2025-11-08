@@ -2,7 +2,7 @@
 #define OMEGA_SHADER_H
 
 #include <string>
-#include <SDL_opengl.h>
+#include <GL/glew.h>
 
 class Shader {
 public:

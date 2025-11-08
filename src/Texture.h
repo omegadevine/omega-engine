@@ -1,7 +1,7 @@
 #ifndef OMEGA_TEXTURE_H
 #define OMEGA_TEXTURE_H
 
-#include <SDL_opengl.h>
+#include <GL/glew.h>
 #include <string>
 
 class Texture {

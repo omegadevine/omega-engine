@@ -1,5 +1,6 @@
 #include "Sprite.h"
 #include <iostream>
+#include <GL/glew.h>
 
 Sprite::Sprite()
     : m_texture(nullptr)
