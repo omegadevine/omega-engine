@@ -1,0 +1,17 @@
+# Omega Engine - Python Dependencies
+# Game engine core dependencies
+
+# Graphics and windowing (if using Python bindings)
+# pygame>=2.5.0
+# pyglet>=2.0.0
+
+# Physics
+# pymunk>=6.5.0
+
+# Networking
+# websockets>=12.0
+
+# Utilities
+# numpy>=1.24.0
+
+# Note: Uncomment dependencies as needed for your specific implementation
