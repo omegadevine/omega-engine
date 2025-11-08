@@ -11,6 +11,17 @@ This repository contains a fully functional 2D game engine built from scratch:
 - Architecture: Entity Component System (ECS)
 - License: MIT
 
+## 🔒 Security & Downloads
+
+**Important**: Pre-built executables are **unsigned** and may trigger Windows SmartScreen warnings. This is normal and expected.
+
+- ✅ All source code is open and reviewable
+- ✅ SHA256 checksums provided in `CHECKSUMS.txt`
+- ✅ Full build instructions available
+- ✅ See [SECURITY_VERIFICATION.md](SECURITY_VERIFICATION.md) for details
+
+**To run executables safely**: Click "More info" → "Run anyway" when Windows SmartScreen appears, or build from source yourself.
+
 Goals
 - Small, well-documented codebase for learning and building games.
 - Modern ECS architecture for flexible game object management.

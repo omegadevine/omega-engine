@@ -1,0 +1,7 @@
+
+Algorithm Hash                                                             File
+--------- ----                                                             ----
+SHA256    3FFBDB0E7443E3D258066612744ACD99E918FCCB51884645515F85670AA884CA dungeon_quest_v5_STANDALONE.exe
+SHA256    3FFBDB0E7443E3D258066612744ACD99E918FCCB51884645515F85670AA884CA dungeon_quest_v5_balanced.exe
+SHA256    E98D8CF560C52449116539AEE681311F9A48227C417DA79535A0FA4C57455901 dungeon_quest_v4_lightning_static.exe
+
