@@ -37,6 +37,7 @@ Features
 - ✅ Collision detection (AABB, Circle)
 - ✅ Scene management with transitions
 - ✅ Audio system (music and sound effects)
+- ✅ UI system (buttons, labels, panels)
 - ✅ 2D sprite rendering system
 - ✅ Entity Component System (ECS)
 - ✅ Input abstraction (keyboard & mouse)
@@ -118,6 +119,17 @@ Audio System
 - Music and sound effect caching
 - OGG, WAV, MP3 support
 
+UI System
+- Button, Label, and Panel widgets
+- Mouse input handling with hover/press states
+- Click callbacks for interactive elements
+- Color transitions and visual feedback
+- UI Manager for element management
+- Hit testing and input consumption
+- Simple text rendering (placeholder)
+- Layered rendering (z-ordering)
+- Extensible widget system
+
 Sprite System
 - Texture-mapped 2D sprites
 - Per-sprite color tinting
@@ -152,8 +164,8 @@ Roadmap
 - [x] Collision detection (AABB, Circle)
 - [x] Scene management
 - [x] Audio system (SDL_mixer)
+- [x] UI system (buttons, labels, panels)
 - [ ] Particle system
-- [ ] UI system (buttons, labels, panels)
 - [ ] Scripting (Lua)
 - [ ] Physics integration (Box2D)
 - [ ] Tilemap renderer
@@ -161,6 +173,10 @@ Roadmap
 
 Demo Application
 The included demo showcases:
+- Full UI system with clickable buttons
+- Main menu with Start and Quit buttons
+- Pause menu with Resume, Restart, and Main Menu options
+- Interactive buttons with hover and press states
 - Scene management with Menu, Game, and Pause scenes
 - Scene transitions and scene stack
 - Player-controlled animated sprite (WASD/Arrow keys)
@@ -171,8 +187,8 @@ The included demo showcases:
 - Camera following with smooth movement
 - ECS-based entity management
 - Texture rendering with color tinting
-- Input handling across multiple scenes
-- Pause menu with resume/restart/quit options
+- Mouse and keyboard input handling
+- Professional UI/UX with visual feedback
 
 Contributing
 See CONTRIBUTING.md

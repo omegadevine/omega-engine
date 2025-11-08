@@ -4,6 +4,9 @@
 #include <SDL.h>
 #include <unordered_map>
 
+// Forward declare Vector2
+struct Vector2;
+
 enum class KeyCode {
     W, A, S, D,
     Up, Down, Left, Right,
@@ -28,9 +31,11 @@ public:
 
     bool isMouseButtonPressed(MouseButton button) const;
     bool isMouseButtonJustPressed(MouseButton button) const;
+    bool isMouseButtonJustReleased(MouseButton button) const;
 
     int getMouseX() const { return m_mouseX; }
     int getMouseY() const { return m_mouseY; }
+    Vector2 getMousePosition() const { return Vector2(static_cast<float>(m_mouseX), static_cast<float>(m_mouseY)); }
 
 private:
     Input();
@@ -45,6 +50,7 @@ private:
     std::unordered_map<KeyCode, bool> m_keyJustPressed;
     std::unordered_map<MouseButton, bool> m_mouseStates;
     std::unordered_map<MouseButton, bool> m_mouseJustPressed;
+    std::unordered_map<MouseButton, bool> m_mouseJustReleased;
 
     int m_mouseX;
     int m_mouseY;

@@ -1,4 +1,5 @@
 #include "Input.h"
+#include "Sprite.h"  // For Vector2
 
 Input& Input::getInstance() {
     static Input instance;
@@ -67,9 +68,11 @@ void Input::update(const SDL_Event& event) {
     else if (event.type == SDL_MOUSEBUTTONUP) {
         if (event.button.button == SDL_BUTTON_LEFT) {
             m_mouseStates[MouseButton::Left] = false;
+            m_mouseJustReleased[MouseButton::Left] = true;
         }
         else if (event.button.button == SDL_BUTTON_RIGHT) {
             m_mouseStates[MouseButton::Right] = false;
+            m_mouseJustReleased[MouseButton::Right] = true;
         }
     }
     else if (event.type == SDL_MOUSEMOTION) {
@@ -81,6 +84,7 @@ void Input::update(const SDL_Event& event) {
 void Input::endFrame() {
     m_keyJustPressed.clear();
     m_mouseJustPressed.clear();
+    m_mouseJustReleased.clear();
 }
 
 bool Input::isKeyPressed(KeyCode key) const {
@@ -106,4 +110,9 @@ bool Input::isMouseButtonPressed(MouseButton button) const {
 bool Input::isMouseButtonJustPressed(MouseButton button) const {
     auto it = m_mouseJustPressed.find(button);
     return it != m_mouseJustPressed.end() && it->second;
+}
+
+bool Input::isMouseButtonJustReleased(MouseButton button) const {
+    auto it = m_mouseJustReleased.find(button);
+    return it != m_mouseJustReleased.end() && it->second;
 }

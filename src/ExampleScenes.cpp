@@ -10,21 +10,53 @@
 
 MenuScene::MenuScene() 
     : Scene("Menu")
-    , m_selectedOption(0)
-    , m_time(0.0f) {
+    , m_time(0.0f)
+    , m_startButton(nullptr)
+    , m_quitButton(nullptr)
+    , m_titleLabel(nullptr) {
 }
 
 void MenuScene::onEnter() {
     std::cout << "MenuScene: Entered" << std::endl;
-    m_selectedOption = 0;
     m_time = 0.0f;
     
     // Play menu music (if loaded)
     AudioManager& audio = AudioManager::getInstance();
     if (audio.isInitialized()) {
-        // In a real game, you'd have loaded music files
         // audio.playMusic("menu_music", -1);
     }
+    
+    // Create UI elements
+    m_uiManager.clear();
+    
+    // Title label
+    m_titleLabel = m_uiManager.addElement<UILabel>("OMEGA ENGINE");
+    m_titleLabel->setPosition(Vector2(250, 100));
+    m_titleLabel->setColor(Color(1.0f, 1.0f, 0.3f, 1.0f));
+    m_titleLabel->setFontSize(32);
+    
+    // Start button
+    m_startButton = m_uiManager.addElement<UIButton>("Start Game");
+    m_startButton->setPosition(Vector2(300, 250));
+    m_startButton->setSize(Vector2(200, 50));
+    m_startButton->setNormalColor(Color(0.2f, 0.5f, 0.8f, 1.0f));
+    m_startButton->setHoverColor(Color(0.3f, 0.6f, 0.9f, 1.0f));
+    m_startButton->setPressedColor(Color(0.1f, 0.4f, 0.7f, 1.0f));
+    m_startButton->setOnClick([this]() {
+        m_sceneManager->changeScene("Game");
+    });
+    
+    // Quit button
+    m_quitButton = m_uiManager.addElement<UIButton>("Quit");
+    m_quitButton->setPosition(Vector2(300, 320));
+    m_quitButton->setSize(Vector2(200, 50));
+    m_quitButton->setNormalColor(Color(0.6f, 0.2f, 0.2f, 1.0f));
+    m_quitButton->setHoverColor(Color(0.7f, 0.3f, 0.3f, 1.0f));
+    m_quitButton->setPressedColor(Color(0.5f, 0.1f, 0.1f, 1.0f));
+    m_quitButton->setOnClick([this]() {
+        std::cout << "MenuScene: Quit button clicked" << std::endl;
+        // Quitting handled by main loop
+    });
 }
 
 void MenuScene::onExit() {
@@ -32,28 +64,12 @@ void MenuScene::onExit() {
 }
 
 void MenuScene::handleInput(Input& input) {
-    AudioManager& audio = AudioManager::getInstance();
-    
-    if (input.isKeyJustPressed(KeyCode::Up)) {
-        m_selectedOption = (m_selectedOption - 1 + 2) % 2;
-        // audio.playSound("menu_move"); // Navigation sound
-    }
-    if (input.isKeyJustPressed(KeyCode::Down)) {
-        m_selectedOption = (m_selectedOption + 1) % 2;
-        // audio.playSound("menu_move");
-    }
-    if (input.isKeyJustPressed(KeyCode::Enter) || input.isKeyJustPressed(KeyCode::Space)) {
-        // audio.playSound("menu_select"); // Selection sound
-        if (m_selectedOption == 0) {
-            m_sceneManager->changeScene("Game");
-        } else if (m_selectedOption == 1) {
-            std::cout << "MenuScene: Quit selected" << std::endl;
-        }
-    }
+    m_uiManager.handleInput(input);
 }
 
 void MenuScene::update(float deltaTime) {
     m_time += deltaTime;
+    m_uiManager.update(deltaTime);
 }
 
 void MenuScene::render(Renderer& renderer) {
@@ -63,9 +79,11 @@ void MenuScene::render(Renderer& renderer) {
     float b = 0.2f + 0.05f * std::sin(m_time * 0.3f);
     renderer.clear(r, g, b, 1.0f);
     
-    // In a real game, you'd render text/sprites here
-    std::cout << "\r[MENU] " << (m_selectedOption == 0 ? "> Start Game" : "  Start Game")
-              << " | " << (m_selectedOption == 1 ? "> Quit" : "  Quit") << "          " << std::flush;
+    // Render UI
+    Shader* shader = AssetManager::getInstance().getShader("sprite_shader");
+    if (shader) {
+        m_uiManager.render(shader, 800, 600);
+    }
 }
 
 // ============================================================================
@@ -243,12 +261,58 @@ void GameScene::render(Renderer& renderer) {
 
 PauseScene::PauseScene()
     : Scene("Pause")
-    , m_selectedOption(0) {
+    , m_panel(nullptr)
+    , m_titleLabel(nullptr)
+    , m_resumeButton(nullptr)
+    , m_restartButton(nullptr)
+    , m_menuButton(nullptr) {
 }
 
 void PauseScene::onEnter() {
     std::cout << "PauseScene: Entered" << std::endl;
-    m_selectedOption = 0;
+    
+    // Create UI elements
+    m_uiManager.clear();
+    
+    // Semi-transparent panel
+    m_panel = m_uiManager.addElement<UIPanel>();
+    m_panel->setPosition(Vector2(200, 150));
+    m_panel->setSize(Vector2(400, 300));
+    m_panel->setBackgroundColor(Color(0.0f, 0.0f, 0.0f, 0.8f));
+    m_panel->setBorderColor(Color(0.5f, 0.5f, 0.5f, 1.0f));
+    
+    // Title
+    m_titleLabel = m_uiManager.addElement<UILabel>("PAUSED");
+    m_titleLabel->setPosition(Vector2(350, 180));
+    m_titleLabel->setColor(Color(1.0f, 1.0f, 1.0f, 1.0f));
+    m_titleLabel->setFontSize(24);
+    
+    // Resume button
+    m_resumeButton = m_uiManager.addElement<UIButton>("Resume");
+    m_resumeButton->setPosition(Vector2(300, 240));
+    m_resumeButton->setSize(Vector2(200, 50));
+    m_resumeButton->setOnClick([this]() {
+        m_sceneManager->popScene();
+    });
+    
+    // Restart button
+    m_restartButton = m_uiManager.addElement<UIButton>("Restart");
+    m_restartButton->setPosition(Vector2(300, 300));
+    m_restartButton->setSize(Vector2(200, 50));
+    m_restartButton->setOnClick([this]() {
+        m_sceneManager->changeScene("Game");
+    });
+    
+    // Main Menu button
+    m_menuButton = m_uiManager.addElement<UIButton>("Main Menu");
+    m_menuButton->setPosition(Vector2(300, 360));
+    m_menuButton->setSize(Vector2(200, 50));
+    m_menuButton->setNormalColor(Color(0.6f, 0.3f, 0.3f, 1.0f));
+    m_menuButton->setHoverColor(Color(0.7f, 0.4f, 0.4f, 1.0f));
+    m_menuButton->setPressedColor(Color(0.5f, 0.2f, 0.2f, 1.0f));
+    m_menuButton->setOnClick([this]() {
+        m_sceneManager->changeScene("Menu");
+    });
 }
 
 void PauseScene::onExit() {
@@ -256,38 +320,25 @@ void PauseScene::onExit() {
 }
 
 void PauseScene::handleInput(Input& input) {
-    if (input.isKeyJustPressed(KeyCode::Up)) {
-        m_selectedOption = (m_selectedOption - 1 + 3) % 3;
-    }
-    if (input.isKeyJustPressed(KeyCode::Down)) {
-        m_selectedOption = (m_selectedOption + 1) % 3;
-    }
-    if (input.isKeyJustPressed(KeyCode::Enter) || input.isKeyJustPressed(KeyCode::Space)) {
-        if (m_selectedOption == 0) {
-            // Resume
-            m_sceneManager->popScene();
-        } else if (m_selectedOption == 1) {
-            // Restart
-            m_sceneManager->changeScene("Game");
-        } else if (m_selectedOption == 2) {
-            // Main Menu
-            m_sceneManager->changeScene("Menu");
-        }
-    }
     if (input.isKeyJustPressed(KeyCode::Escape)) {
         m_sceneManager->popScene();
+        return;
     }
+    
+    m_uiManager.handleInput(input);
 }
 
 void PauseScene::update(float deltaTime) {
-    // Pause doesn't update much
+    m_uiManager.update(deltaTime);
 }
 
 void PauseScene::render(Renderer& renderer) {
-    // Semi-transparent overlay (in real game, render game scene below)
+    // Darken background (game scene would be rendered first)
     renderer.clear(0.0f, 0.0f, 0.0f, 0.5f);
     
-    std::cout << "\r[PAUSE] " << (m_selectedOption == 0 ? "> Resume" : "  Resume")
-              << " | " << (m_selectedOption == 1 ? "> Restart" : "  Restart")
-              << " | " << (m_selectedOption == 2 ? "> Main Menu" : "  Main Menu") << "          " << std::flush;
+    // Render UI
+    Shader* shader = AssetManager::getInstance().getShader("sprite_shader");
+    if (shader) {
+        m_uiManager.render(shader, 800, 600);
+    }
 }

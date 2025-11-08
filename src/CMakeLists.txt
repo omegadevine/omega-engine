@@ -18,6 +18,7 @@ set(SOURCES
     SceneManager.cpp
     ExampleScenes.cpp
     Audio.cpp
+    UI.cpp
 )
 
 set(HEADERS
@@ -36,6 +37,7 @@ set(HEADERS
     SceneManager.h
     ExampleScenes.h
     Audio.h
+    UI.h
     stb_image.h
 )
 

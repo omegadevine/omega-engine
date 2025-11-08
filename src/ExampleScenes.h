@@ -3,6 +3,7 @@
 
 #include "Scene.h"
 #include "AnimatedSprite.h"
+#include "UI.h"
 #include <vector>
 
 // Main Menu Scene
@@ -19,8 +20,11 @@ public:
     void render(Renderer& renderer) override;
 
 private:
-    int m_selectedOption;
     float m_time;
+    UIManager m_uiManager;
+    UIButton* m_startButton;
+    UIButton* m_quitButton;
+    UILabel* m_titleLabel;
 };
 
 // Gameplay Scene
@@ -60,7 +64,12 @@ public:
     void render(Renderer& renderer) override;
 
 private:
-    int m_selectedOption;
+    UIManager m_uiManager;
+    UIPanel* m_panel;
+    UILabel* m_titleLabel;
+    UIButton* m_resumeButton;
+    UIButton* m_restartButton;
+    UIButton* m_menuButton;
 };
 
 #endif // OMEGA_EXAMPLE_SCENES_H
