@@ -38,6 +38,9 @@ Features
 - ✅ Scene management with transitions
 - ✅ Audio system (music and sound effects)
 - ✅ UI system (buttons, labels, panels)
+- ✅ Particle system (visual effects)
+- ✅ Tilemap system (level design)
+- ✅ Text rendering (bitmap fonts)
 - ✅ 2D sprite rendering system
 - ✅ Entity Component System (ECS)
 - ✅ Input abstraction (keyboard & mouse)
@@ -130,6 +133,37 @@ UI System
 - Layered rendering (z-ordering)
 - Extensible widget system
 
+Particle System
+- Configurable particle emitters
+- Physics simulation (velocity, acceleration, gravity)
+- Particle lifetime and color transitions
+- Fade out and shrink effects
+- Burst and continuous emission modes
+- Preset effects (fire, smoke, explosion, sparks, rain, snow)
+- Performance optimized with particle pooling
+- Multiple simultaneous emitters
+
+Tilemap System
+- Grid-based tile rendering
+- Tileset support with texture atlases
+- Multiple layer support
+- Collision detection integration
+- World-to-tile coordinate conversion
+- File save/load (binary format)
+- Viewport culling for performance
+- Fill patterns and batch operations
+- TilemapManager for layer management
+
+Text Rendering System
+- Bitmap font support
+- BMFont .fnt file format support
+- Monospace font generation
+- Text measurement and alignment (left, center, right)
+- Color and scale customization
+- Multi-line text support
+- FontManager for resource management
+- Sprite-based rendering
+
 Sprite System
 - Texture-mapped 2D sprites
 - Per-sprite color tinting
@@ -165,7 +199,9 @@ Roadmap
 - [x] Scene management
 - [x] Audio system (SDL_mixer)
 - [x] UI system (buttons, labels, panels)
-- [ ] Particle system
+- [x] Particle system
+- [x] Tilemap system
+- [x] Text rendering (bitmap fonts)
 - [ ] Scripting (Lua)
 - [ ] Physics integration (Box2D)
 - [ ] Tilemap renderer

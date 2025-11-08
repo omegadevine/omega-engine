@@ -19,6 +19,9 @@ set(SOURCES
     ExampleScenes.cpp
     Audio.cpp
     UI.cpp
+    ParticleSystem.cpp
+    Tilemap.cpp
+    Text.cpp
 )
 
 set(HEADERS
@@ -38,6 +41,9 @@ set(HEADERS
     ExampleScenes.h
     Audio.h
     UI.h
+    ParticleSystem.h
+    Tilemap.h
+    Text.h
     stb_image.h
 )
 
