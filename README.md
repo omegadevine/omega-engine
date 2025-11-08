@@ -1,18 +1,21 @@
 ```markdown
 # omega-engine
 
-A minimal-from-scratch game engine scaffold.
+A minimal-from-scratch 2D game engine with ECS architecture.
 
-This repository contains the initial scaffolding for a cross-platform game engine:
+This repository contains a fully functional 2D game engine built from scratch:
 - Language: C++17
 - Build system: CMake
 - Windowing & input: SDL2
 - Renderer: OpenGL 3.3 Core
+- Architecture: Entity Component System (ECS)
 - License: MIT
 
 Goals
-- Small, well-documented codebase for learning and building a modular engine.
-- Start with window creation and a clear-screen example, then incrementally add renderer features, an ECS, scripting, physics, audio, and tools.
+- Small, well-documented codebase for learning and building games.
+- Modern ECS architecture for flexible game object management.
+- Cross-platform support (Linux, macOS, Windows).
+- Clean APIs for sprites, textures, input, and rendering.
 
 Getting started (development)
 1. Install dependencies:
@@ -21,36 +24,80 @@ Getting started (development)
    - Windows: Install MSVC, CMake, and use vcpkg for SDL2: vcpkg install sdl2:x64-windows
 2. mkdir build && cd build
 3. cmake .. && cmake --build .
+4. Run: ./omega-engine (Linux/Mac) or Release\omega-engine.exe (Windows)
+
+Features
+- ✅ Cross-platform window creation (SDL2)
+- ✅ OpenGL 3.3 Core rendering pipeline
+- ✅ GLSL shader compilation and management
+- ✅ Texture loading with stb_image
+- ✅ 2D sprite rendering system
+- ✅ Entity Component System (ECS)
+- ✅ Input abstraction (keyboard & mouse)
+- ✅ Component-based architecture
+- ✅ Animated sprite demo
+- ✅ Security scanning (CodeQL)
+- ✅ Automated backups
+- ✅ CI/CD for Linux, macOS, and Windows
 
 Project Layout
-- src/            — engine source (main entry, renderer, shaders)
+- src/            — engine source (renderer, sprites, ECS, input)
 - assets/         — runtime assets (textures, shaders, audio)
-- external/       — third-party submodules / vendored libs (optional)
-- tests/          — unit / integration tests
-- docs/           — design notes and docs
+- .github/        — CI/CD workflows and issue templates
+- docs/           — design notes and documentation
 
-Roadmap (initial)
+Core Systems
+
+Renderer
+- OpenGL 3.3 Core context
+- Shader compilation with error reporting
+- VSync support
+- Double buffering
+
+Sprite System
+- Texture-mapped 2D sprites
+- Per-sprite color tinting
+- Position, size, and color control
+- Automatic texture coordinate mapping
+
+Entity Component System
+- Entity creation and destruction
+- Component-based design
+- Transform and Sprite components included
+- Easy to extend with new components
+
+Input System
+- Keyboard input (WASD, arrows, etc.)
+- Mouse input (position and buttons)
+- Key press and key just-pressed detection
+- Frame-based input state management
+
+Roadmap
 - [x] Project scaffolding & CI
 - [x] Window + input subsystem (SDL2)
 - [x] OpenGL initialization (3.3 Core)
 - [x] Renderer: clear screen with animated colors
 - [x] Shader system: compile, link, error handling
-- [ ] Sprite rendering system
-- [ ] Texture loading
-- [ ] Basic ECS
-- [ ] Asset pipeline
+- [x] Texture loading system
+- [x] Sprite rendering system
+- [x] Entity Component System (ECS)
+- [x] Input abstraction layer
+- [ ] Asset manager/resource system
+- [ ] Audio system
+- [ ] Particle system
+- [ ] Scene management
 - [ ] Scripting (Lua)
-- [ ] Physics integration (optional)
+- [ ] Physics integration (Box2D)
+- [ ] Tilemap renderer
+- [ ] Animation system
 
-Features Implemented
-- ✅ Cross-platform window creation (SDL2)
-- ✅ OpenGL 3.3 Core context
-- ✅ Basic renderer with clear color
-- ✅ GLSL shader compilation system
-- ✅ Animated background demo
-- ✅ Security scanning (CodeQL)
-- ✅ Automated backups
-- ✅ CI/CD for Linux, macOS, and Windows
+Demo Application
+The included demo showcases:
+- Player-controlled sprite (WASD/Arrow keys)
+- Multiple animated sprites with sine wave motion
+- ECS-based entity management
+- Texture rendering with color tinting
+- Input handling
 
 Contributing
 See CONTRIBUTING.md

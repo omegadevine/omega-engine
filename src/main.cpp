@@ -1,8 +1,13 @@
 #include <SDL.h>
 #include <iostream>
 #include <cstring>
+#include <cmath>
 #include "Renderer.h"
 #include "Shader.h"
+#include "Texture.h"
+#include "Sprite.h"
+#include "ECS.h"
+#include "Input.h"
 
 int main(int argc, char** argv) {
     // Input validation for command line arguments
@@ -20,11 +25,14 @@ int main(int argc, char** argv) {
         return 1;
     }
 
+    const int SCREEN_WIDTH = 800;
+    const int SCREEN_HEIGHT = 600;
+
     SDL_Window* window = SDL_CreateWindow(
-        "omega-engine",
+        "omega-engine - ECS Demo",
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
-        800, 600,
+        SCREEN_WIDTH, SCREEN_HEIGHT,
         SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN
     );
 
@@ -43,52 +51,156 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    // Create a basic shader for testing
-    Shader testShader;
+    // Create sprite shader
+    Shader spriteShader;
     const std::string vertexShaderSource = R"(
         #version 330 core
-        layout(location = 0) in vec3 position;
+        layout(location = 0) in vec2 aPos;
+        layout(location = 1) in vec2 aTexCoord;
+        
+        uniform vec2 position;
+        uniform vec2 size;
+        
+        out vec2 TexCoord;
+        
         void main() {
-            gl_Position = vec4(position, 1.0);
+            vec2 scaledPos = aPos * size + position;
+            gl_Position = vec4(scaledPos, 0.0, 1.0);
+            TexCoord = aTexCoord;
         }
     )";
     
     const std::string fragmentShaderSource = R"(
         #version 330 core
+        in vec2 TexCoord;
         out vec4 FragColor;
+        
+        uniform sampler2D image;
+        uniform vec4 spriteColor;
+        
         void main() {
-            FragColor = vec4(0.2, 0.6, 0.8, 1.0);
+            FragColor = texture(image, TexCoord) * spriteColor;
         }
     )";
 
-    if (testShader.loadFromSource(vertexShaderSource, fragmentShaderSource)) {
-        std::cout << "Test shader loaded successfully" << std::endl;
-    } else {
-        std::cerr << "Warning: Test shader failed to load" << std::endl;
+    if (!spriteShader.loadFromSource(vertexShaderSource, fragmentShaderSource)) {
+        std::cerr << "Failed to load sprite shader" << std::endl;
+        SDL_DestroyWindow(window);
+        SDL_Quit();
+        return 1;
+    }
+
+    // Create ECS
+    ECS ecs;
+    
+    // Create test texture
+    Texture testTexture;
+    testTexture.loadFromFile("test.png"); // Will generate checkerboard pattern
+
+    // Create player entity
+    Entity player = ecs.createEntity();
+    auto* playerTransform = ecs.addComponent<Transform>(player);
+    playerTransform->position = Vector2(SCREEN_WIDTH / 2.0f - 32, SCREEN_HEIGHT / 2.0f - 32);
+    playerTransform->scale = Vector2(1.0f, 1.0f);
+    
+    auto* playerSprite = ecs.addComponent<SpriteComponent>(player);
+    playerSprite->sprite.setTexture(&testTexture);
+    playerSprite->sprite.setSize(Vector2(64, 64));
+    playerSprite->sprite.setColor(Color(0.3f, 0.7f, 1.0f, 1.0f));
+
+    // Create some floating entities
+    std::vector<Entity> floaters;
+    for (int i = 0; i < 5; i++) {
+        Entity floater = ecs.createEntity();
+        auto* transform = ecs.addComponent<Transform>(floater);
+        transform->position = Vector2(100.0f + i * 120.0f, 100.0f + (i % 2) * 100.0f);
+        
+        auto* sprite = ecs.addComponent<SpriteComponent>(floater);
+        sprite->sprite.setTexture(&testTexture);
+        sprite->sprite.setSize(Vector2(48, 48));
+        
+        float hue = i / 5.0f;
+        sprite->sprite.setColor(Color(
+            0.5f + 0.5f * std::sin(hue * 6.28f),
+            0.5f + 0.5f * std::sin((hue + 0.33f) * 6.28f),
+            0.5f + 0.5f * std::sin((hue + 0.66f) * 6.28f),
+            1.0f
+        ));
+        
+        floaters.push_back(floater);
     }
 
     bool running = true;
     SDL_Event event;
-    float colorPhase = 0.0f;
+    float time = 0.0f;
 
-    std::cout << "Engine running. Press ESC or close window to quit." << std::endl;
+    std::cout << "=== omega-engine ECS Demo ===" << std::endl;
+    std::cout << "Controls:" << std::endl;
+    std::cout << "  WASD / Arrow Keys - Move player" << std::endl;
+    std::cout << "  ESC - Quit" << std::endl;
+    std::cout << "Entities: " << ecs.getEntities().size() << std::endl;
 
     while (running) {
+        Input& input = Input::getInstance();
+        
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) running = false;
-            if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE) running = false;
+            input.update(event);
         }
 
-        // Animate background color
-        colorPhase += 0.01f;
-        if (colorPhase > 6.28f) colorPhase = 0.0f;
+        if (input.isKeyPressed(KeyCode::Escape)) {
+            running = false;
+        }
 
-        float r = (std::sin(colorPhase) + 1.0f) * 0.5f;
-        float g = (std::sin(colorPhase + 2.09f) + 1.0f) * 0.5f;
-        float b = (std::sin(colorPhase + 4.18f) + 1.0f) * 0.5f;
+        // Update player movement
+        const float moveSpeed = 3.0f;
+        if (input.isKeyPressed(KeyCode::W) || input.isKeyPressed(KeyCode::Up)) {
+            playerTransform->position.y -= moveSpeed;
+        }
+        if (input.isKeyPressed(KeyCode::S) || input.isKeyPressed(KeyCode::Down)) {
+            playerTransform->position.y += moveSpeed;
+        }
+        if (input.isKeyPressed(KeyCode::A) || input.isKeyPressed(KeyCode::Left)) {
+            playerTransform->position.x -= moveSpeed;
+        }
+        if (input.isKeyPressed(KeyCode::D) || input.isKeyPressed(KeyCode::Right)) {
+            playerTransform->position.x += moveSpeed;
+        }
 
-        renderer.clear(r * 0.3f, g * 0.3f, b * 0.3f, 1.0f);
+        // Keep player in bounds
+        if (playerTransform->position.x < 0) playerTransform->position.x = 0;
+        if (playerTransform->position.y < 0) playerTransform->position.y = 0;
+        if (playerTransform->position.x > SCREEN_WIDTH - 64) 
+            playerTransform->position.x = SCREEN_WIDTH - 64;
+        if (playerTransform->position.y > SCREEN_HEIGHT - 64) 
+            playerTransform->position.y = SCREEN_HEIGHT - 64;
+
+        // Update floaters (sine wave animation)
+        time += 0.02f;
+        for (size_t i = 0; i < floaters.size(); i++) {
+            auto* transform = ecs.getComponent<Transform>(floaters[i]);
+            if (transform) {
+                transform->position.y = 100.0f + (i % 2) * 100.0f + 
+                    std::sin(time + i) * 30.0f;
+            }
+        }
+
+        // Render
+        renderer.clear(0.1f, 0.1f, 0.15f, 1.0f);
+
+        // Render all sprites
+        for (Entity entity : ecs.getEntities()) {
+            auto* transform = ecs.getComponent<Transform>(entity);
+            auto* spriteComp = ecs.getComponent<SpriteComponent>(entity);
+            
+            if (transform && spriteComp && spriteComp->visible) {
+                spriteComp->sprite.setPosition(transform->position);
+                spriteComp->sprite.draw(&spriteShader, SCREEN_WIDTH, SCREEN_HEIGHT);
+            }
+        }
+
         renderer.present();
+        input.endFrame();
 
         SDL_Delay(16); // ~60fps
     }

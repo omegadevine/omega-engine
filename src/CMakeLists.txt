@@ -5,11 +5,20 @@ set(SOURCES
     main.cpp
     Renderer.cpp
     Shader.cpp
+    Texture.cpp
+    Sprite.cpp
+    ECS.cpp
+    Input.cpp
 )
 
 set(HEADERS
     Renderer.h
     Shader.h
+    Texture.h
+    Sprite.h
+    ECS.h
+    Input.h
+    stb_image.h
 )
 
 # executable
