@@ -7,15 +7,62 @@
 /*.cmake
 /*.vcxproj
 /*.sln
+cmake-build-*/
 
 # OS files
 .DS_Store
 Thumbs.db
+*.swp
+*.swo
+*~
 
 # IDE
 .vscode/
 .idea/
 *.iml
+*.user
+*.suo
 
 # Temporary
 *.log
+*.tmp
+*.bak
+*.old
+
+# Compiled files
+*.o
+*.obj
+*.exe
+*.out
+*.app
+*.dylib
+*.so
+*.dll
+*.a
+*.lib
+
+# Package managers
+vcpkg_installed/
+conan/
+.conan/
+
+# Credentials and secrets (CRITICAL)
+*.pem
+*.key
+*.cert
+*.pfx
+*secret*
+*password*
+.env
+.env.*
+credentials.json
+config.ini
+
+# Large binary files
+*.zip
+*.tar.gz
+*.7z
+*.rar
+*.iso
+*.dmg
+*.pkg
