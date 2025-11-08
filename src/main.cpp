@@ -12,6 +12,7 @@
 #include "Camera.h"
 #include "AnimatedSprite.h"
 #include "Animation.h"
+#include "Collision.h"
 
 int main(int argc, char** argv) {
     // Input validation for command line arguments
@@ -33,7 +34,7 @@ int main(int argc, char** argv) {
     const int SCREEN_HEIGHT = 600;
 
     SDL_Window* window = SDL_CreateWindow(
-        "omega-engine - Animation Demo",
+        "omega-engine - Collision Demo",
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
         SCREEN_WIDTH, SCREEN_HEIGHT,
@@ -146,8 +147,20 @@ int main(int argc, char** argv) {
     playerSprite->sprite.setTexture(testTexture);
     playerSprite->sprite.setSize(Vector2(64, 64));
     playerSprite->sprite.setColor(Color(0.3f, 0.7f, 1.0f, 1.0f));
+    
+    // Add player collider
+    auto* playerCollider = ecs.addComponent<Collider>(player);
+    playerCollider->type = ColliderType::Box;
+    playerCollider->size = Vector2(64, 64);
+    playerCollider->layer = 1;
+    playerCollider->mask = 0xFFFFFFFF;
+    playerCollider->isTrigger = false;
+    playerCollider->isStatic = false;
+    playerCollider->onCollisionEnter = [](Entity other) {
+        std::cout << "Player collided with entity " << other << std::endl;
+    };
 
-    // Create some floating entities
+    // Create some floating entities with colliders
     std::vector<Entity> floaters;
     for (int i = 0; i < 5; i++) {
         Entity floater = ecs.createEntity();
@@ -166,8 +179,25 @@ int main(int argc, char** argv) {
             1.0f
         ));
         
+        // Add colliders (alternating box and circle)
+        auto* collider = ecs.addComponent<Collider>(floater);
+        if (i % 2 == 0) {
+            collider->type = ColliderType::Box;
+            collider->size = Vector2(48, 48);
+        } else {
+            collider->type = ColliderType::Circle;
+            collider->size = Vector2(24, 24); // radius in x
+        }
+        collider->layer = 2;
+        collider->mask = 0xFFFFFFFF;
+        collider->isTrigger = false;
+        collider->isStatic = true; // These don't move
+        
         floaters.push_back(floater);
     }
+    
+    // Create collision system
+    CollisionSystem collisionSystem(&ecs);
 
     bool running = true;
     SDL_Event event;
@@ -175,9 +205,9 @@ int main(int argc, char** argv) {
     float deltaTime = 0.016f; // ~60fps
     bool isMoving = false;
 
-    std::cout << "=== omega-engine Animation Demo ===" << std::endl;
+    std::cout << "=== omega-engine Collision Demo ===" << std::endl;
     std::cout << "Controls:" << std::endl;
-    std::cout << "  WASD / Arrow Keys - Move player (walk animation)" << std::endl;
+    std::cout << "  WASD / Arrow Keys - Move player (with collision)" << std::endl;
     std::cout << "  Q/E - Zoom Out/In" << std::endl;
     std::cout << "  SPACE - Screen Shake" << std::endl;
     std::cout << "  R - Reset Camera" << std::endl;
@@ -187,6 +217,7 @@ int main(int argc, char** argv) {
     std::cout << "Loaded Shaders: " << assets.getShaderCount() << std::endl;
     std::cout << "World Size: 1600x1200 (camera follows player)" << std::endl;
     std::cout << "Animation: Idle <-> Walk (automatic)" << std::endl;
+    std::cout << "Collision: AABB and Circle detection active" << std::endl;
 
     while (running) {
         Input& input = Input::getInstance();
@@ -264,6 +295,9 @@ int main(int argc, char** argv) {
         // Update animated sprite
         playerAnimSprite.setPosition(playerTransform->position);
         playerAnimSprite.update(deltaTime);
+        
+        // Update collision system
+        collisionSystem.update();
 
         // Update floaters (sine wave animation)
         time += 0.02f;

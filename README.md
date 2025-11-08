@@ -34,6 +34,7 @@ Features
 - ✅ Asset Manager for resource management
 - ✅ Camera system with follow and zoom
 - ✅ Sprite animation system
+- ✅ Collision detection (AABB, Circle)
 - ✅ 2D sprite rendering system
 - ✅ Entity Component System (ECS)
 - ✅ Input abstraction (keyboard & mouse)
@@ -82,6 +83,18 @@ Animation System
 - Sprite sheet support
 - Smooth animation transitions
 
+Collision Detection
+- AABB (Axis-Aligned Bounding Box) collision
+- Circle collision detection
+- Box-Circle collision support
+- Collision layers and masks for filtering
+- Trigger volumes (non-physical overlaps)
+- Static and dynamic colliders
+- Collision callbacks (enter, stay, exit)
+- Automatic collision resolution
+- Query functions (radius, box searches)
+- Performance statistics
+
 Sprite System
 - Texture-mapped 2D sprites
 - Per-sprite color tinting
@@ -113,7 +126,7 @@ Roadmap
 - [x] Asset Manager for resource management
 - [x] Camera system with follow and zoom
 - [x] Sprite animation system
-- [ ] Collision detection (AABB, Circle)
+- [x] Collision detection (AABB, Circle)
 - [ ] Scene management
 - [ ] Audio system (SDL_mixer)
 - [ ] Particle system
@@ -127,6 +140,9 @@ Demo Application
 The included demo showcases:
 - Player-controlled animated sprite (WASD/Arrow keys)
 - Automatic animation switching (idle <-> walk)
+- Collision detection with static obstacles
+- AABB and Circle colliders
+- Collision resolution (player bounces off obstacles)
 - Multiple animated sprites with sine wave motion
 - Camera following with smooth movement
 - ECS-based entity management

@@ -13,6 +13,7 @@ set(SOURCES
     Camera.cpp
     Animation.cpp
     AnimatedSprite.cpp
+    Collision.cpp
 )
 
 set(HEADERS
@@ -26,6 +27,7 @@ set(HEADERS
     Camera.h
     Animation.h
     AnimatedSprite.h
+    Collision.h
     stb_image.h
 )
 
