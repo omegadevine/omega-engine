@@ -22,6 +22,8 @@ set(SOURCES
     ParticleSystem.cpp
     Tilemap.cpp
     Text.cpp
+    Debug.cpp
+    AssetPipeline.cpp
 )
 
 set(HEADERS
@@ -44,6 +46,8 @@ set(HEADERS
     ParticleSystem.h
     Tilemap.h
     Text.h
+    Debug.h
+    AssetPipeline.h
     stb_image.h
 )
 

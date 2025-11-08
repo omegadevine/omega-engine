@@ -41,6 +41,8 @@ Features
 - ✅ Particle system (visual effects)
 - ✅ Tilemap system (level design)
 - ✅ Text rendering (bitmap fonts)
+- ✅ Debug visualization and profiling
+- ✅ Asset pipeline and hot reloading
 - ✅ 2D sprite rendering system
 - ✅ Entity Component System (ECS)
 - ✅ Input abstraction (keyboard & mouse)
@@ -164,6 +166,41 @@ Text Rendering System
 - FontManager for resource management
 - Sprite-based rendering
 
+Debug System
+- DebugRenderer for visual debugging
+- Draw shapes (lines, rects, circles, crosses, grids)
+- Collision visualization (AABB, CircleCollider)
+- Camera bounds visualization
+- Lifetime-based shape persistence
+- Toggle enable/disable
+- Profiler for performance monitoring
+- FPS, frame time, update/render time tracking
+- Section timing for custom profiling
+- Draw call, entity, particle counting
+- Memory usage tracking
+- DebugConsole for logging and commands
+- Color-coded messages (log, warning, error)
+- Command registration and execution system
+- Message history with timestamp
+
+Asset Pipeline System
+- IAssetProcessor interface for custom processors
+- TextureProcessor with compression and mipmaps
+- AudioProcessor with quality settings
+- FontProcessor with charset and size configuration
+- AssetMetadata tracking (checksums, file sizes, timestamps)
+- Directory batch processing (recursive)
+- Asset validation and reprocessing detection
+- Progress callbacks for UI integration
+- AssetHotReloader for live asset updates
+- Directory watching and file change detection
+- Automatic asset reloading on modification
+- Extension-based reload callbacks
+- AssetBundler for packaging
+- Bundle creation and extraction
+- Compression and encryption support
+- File listing and management
+
 Sprite System
 - Texture-mapped 2D sprites
 - Per-sprite color tinting
@@ -202,6 +239,8 @@ Roadmap
 - [x] Particle system
 - [x] Tilemap system
 - [x] Text rendering (bitmap fonts)
+- [x] Debug tools (profiler, visualizer, console)
+- [x] Asset pipeline (processors, hot reload, bundler)
 - [ ] Scripting (Lua)
 - [ ] Physics integration (Box2D)
 - [ ] Tilemap renderer
