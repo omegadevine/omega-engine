@@ -243,12 +243,12 @@ public:
     bool alive;
     
     Enemy(int x, int y, int lvl) : pos(x, y), oldPos(x, y), symbol('r'), name("Rat"),
-                                    health(20), maxHealth(20), attack(5), defense(2),
+                                    health(15), maxHealth(15), attack(3), defense(1),
                                     aggroRange(5), color(BRIGHT_GREEN), alive(true) {
-        health += lvl * 10;
+        health += lvl * 5;
         maxHealth = health;
-        attack += lvl * 2;
-        defense += lvl;
+        attack += lvl * 1;
+        defense += lvl / 2;
         
         if (lvl > 2) { symbol = 'O'; name = "Orc"; color = BRIGHT_RED; }
         if (lvl > 4) { symbol = 'D'; name = "Dragon"; color = BRIGHT_MAGENTA; aggroRange = 8; }
@@ -403,6 +403,30 @@ public:
         };
         items.push_back(new KeyItem(keyX, keyY));
         
+        // Place healing potions
+        class HealthPotion : public Item {
+        public:
+            HealthPotion(int x, int y) : Item(x, y, 'H', "Health Potion", BRIGHT_RED) {}
+            void applyEffect(Player* p) override { 
+                p->health = min(p->maxHealth, p->health + 50);
+            }
+        };
+        
+        int numPotions = 3 + level;  // More potions on higher levels
+        for (int i = 0; i < numPotions; i++) {
+            int px, py;
+            int attempts = 0;
+            do {
+                px = 5 + rand() % (WIDTH - 10);
+                py = 3 + rand() % (HEIGHT - 6);
+                attempts++;
+            } while ((tiles[py][px] != '.' || Vec2(px, py).dist(player->pos) < 3) && attempts < 50);
+            
+            if (attempts < 50) {
+                items.push_back(new HealthPotion(px, py));
+            }
+        }
+        
         // Place enemies
         int numEnemies = 3 + level;
         for (int i = 0; i < numEnemies; i++) {
@@ -465,19 +489,17 @@ public:
             staticDrawn = true;
         }
         
-        // Clear old positions of dynamic objects
+        // Clear old positions of dynamic objects - ALWAYS clear to prevent afterimages
         if (player) {
-            if (player->oldPos.x != player->pos.x || player->oldPos.y != player->pos.y) {
-                char tile = tiles[player->oldPos.y][player->oldPos.x];
-                if (tile == '.') tile = (char)250;
-                int color = GRAY;
-                if (tiles[player->oldPos.y][player->oldPos.x] == 'X') color = BRIGHT_GREEN;
-                Console::setChar(player->oldPos.x, player->oldPos.y, tile, color);
-            }
+            char tile = tiles[player->oldPos.y][player->oldPos.x];
+            if (tile == '.') tile = (char)250;
+            int color = GRAY;
+            if (tiles[player->oldPos.y][player->oldPos.x] == 'X') color = BRIGHT_GREEN;
+            Console::setChar(player->oldPos.x, player->oldPos.y, tile, color);
         }
         
         for (auto e : enemies) {
-            if (e && (e->oldPos.x != e->pos.x || e->oldPos.y != e->pos.y)) {
+            if (e) {
                 char tile = tiles[e->oldPos.y][e->oldPos.x];
                 if (tile == '.') tile = (char)250;
                 int color = GRAY;
