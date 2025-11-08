@@ -68,11 +68,11 @@ public:
     static void flush() {
         if (!dirty) return;
         
-        COORD coord = {0, 0};
-        SetConsoleCursorPosition(hConsole, coord);
-        
-        // Write entire screen in one go
+        // Write entire screen line by line for perfect sync
         for (int y = 0; y < 30; y++) {
+            COORD coord = {0, (SHORT)y};
+            SetConsoleCursorPosition(hConsole, coord);
+            
             for (int x = 0; x < 80; x++) {
                 SetConsoleTextAttribute(hConsole, colorBuffer[y][x]);
                 cout << screenBuffer[y][x];
@@ -536,22 +536,41 @@ public:
     void playLevel() {
         if (!dungeon || !dungeon->player) return;
         
+        DWORD lastEnemyUpdate = GetTickCount();
+        const DWORD enemyUpdateInterval = 200;  // Enemies move every 200ms
+        
         while (running && dungeon->player->alive && !dungeon->exitReached) {
-            dungeon->draw();
-            
+            // Check input FIRST for instant response
             if (_kbhit()) {
                 int key = _getch();
                 if (key == 224) key = _getch();
                 
-                if (key == 'w' || key == 'W') dungeon->player->move(0, -1, *dungeon);
-                else if (key == 's' || key == 'S') dungeon->player->move(0, 1, *dungeon);
-                else if (key == 'a' || key == 'A') dungeon->player->move(-1, 0, *dungeon);
-                else if (key == 'd' || key == 'D') dungeon->player->move(1, 0, *dungeon);
-                else if (key == 27) running = false;
+                if (key == 'w' || key == 'W') {
+                    dungeon->player->move(0, -1, *dungeon);
+                    dungeon->draw();  // Draw immediately after move
+                } else if (key == 's' || key == 'S') {
+                    dungeon->player->move(0, 1, *dungeon);
+                    dungeon->draw();
+                } else if (key == 'a' || key == 'A') {
+                    dungeon->player->move(-1, 0, *dungeon);
+                    dungeon->draw();
+                } else if (key == 'd' || key == 'D') {
+                    dungeon->player->move(1, 0, *dungeon);
+                    dungeon->draw();
+                } else if (key == 27) {
+                    running = false;
+                }
             }
             
-            dungeon->update();
-            Sleep(100);  // Slightly faster update
+            // Update enemies on timer (not every frame)
+            DWORD now = GetTickCount();
+            if (now - lastEnemyUpdate >= enemyUpdateInterval) {
+                dungeon->update();
+                dungeon->draw();
+                lastEnemyUpdate = now;
+            }
+            
+            Sleep(16);  // ~60 FPS, but input is checked every frame
         }
     }
     
