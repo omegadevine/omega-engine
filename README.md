@@ -31,6 +31,7 @@ Features
 - ✅ OpenGL 3.3 Core rendering pipeline
 - ✅ GLSL shader compilation and management
 - ✅ Texture loading with stb_image
+- ✅ Asset Manager for resource management
 - ✅ 2D sprite rendering system
 - ✅ Entity Component System (ECS)
 - ✅ Input abstraction (keyboard & mouse)
@@ -53,6 +54,13 @@ Renderer
 - Shader compilation with error reporting
 - VSync support
 - Double buffering
+
+Asset Manager
+- Centralized resource management
+- Automatic caching and reference counting
+- Texture and shader loading
+- Memory-efficient asset sharing
+- Prevents duplicate loads
 
 Sprite System
 - Texture-mapped 2D sprites
@@ -82,14 +90,18 @@ Roadmap
 - [x] Sprite rendering system
 - [x] Entity Component System (ECS)
 - [x] Input abstraction layer
-- [ ] Asset manager/resource system
-- [ ] Audio system
-- [ ] Particle system
+- [x] Asset Manager for resource management
+- [ ] Camera system with follow and zoom
+- [ ] Sprite animation system
+- [ ] Collision detection (AABB, Circle)
 - [ ] Scene management
+- [ ] Audio system (SDL_mixer)
+- [ ] Particle system
+- [ ] UI system (buttons, labels, panels)
 - [ ] Scripting (Lua)
 - [ ] Physics integration (Box2D)
 - [ ] Tilemap renderer
-- [ ] Animation system
+- [ ] Save/Load system
 
 Demo Application
 The included demo showcases:

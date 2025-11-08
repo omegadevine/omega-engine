@@ -9,6 +9,7 @@ set(SOURCES
     Sprite.cpp
     ECS.cpp
     Input.cpp
+    AssetManager.cpp
 )
 
 set(HEADERS
@@ -18,6 +19,7 @@ set(HEADERS
     Sprite.h
     ECS.h
     Input.h
+    AssetManager.h
     stb_image.h
 )
 

@@ -8,6 +8,7 @@
 #include "Sprite.h"
 #include "ECS.h"
 #include "Input.h"
+#include "AssetManager.h"
 
 int main(int argc, char** argv) {
     // Input validation for command line arguments
@@ -29,7 +30,7 @@ int main(int argc, char** argv) {
     const int SCREEN_HEIGHT = 600;
 
     SDL_Window* window = SDL_CreateWindow(
-        "omega-engine - ECS Demo",
+        "omega-engine - Asset Manager Demo",
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
         SCREEN_WIDTH, SCREEN_HEIGHT,
@@ -51,8 +52,10 @@ int main(int argc, char** argv) {
         return 1;
     }
 
-    // Create sprite shader
-    Shader spriteShader;
+    // Get Asset Manager instance
+    AssetManager& assets = AssetManager::getInstance();
+
+    // Load sprite shader using Asset Manager
     const std::string vertexShaderSource = R"(
         #version 330 core
         layout(location = 0) in vec2 aPos;
@@ -83,19 +86,22 @@ int main(int argc, char** argv) {
         }
     )";
 
-    if (!spriteShader.loadFromSource(vertexShaderSource, fragmentShaderSource)) {
+    Shader* spriteShader = assets.loadShader("sprite_shader", vertexShaderSource, fragmentShaderSource);
+    if (!spriteShader) {
         std::cerr << "Failed to load sprite shader" << std::endl;
         SDL_DestroyWindow(window);
         SDL_Quit();
         return 1;
     }
 
+    // Load texture using Asset Manager
+    Texture* testTexture = assets.loadTexture("test_pattern", "test.png");
+    if (!testTexture) {
+        std::cerr << "Warning: Failed to load texture, continuing anyway" << std::endl;
+    }
+
     // Create ECS
     ECS ecs;
-    
-    // Create test texture
-    Texture testTexture;
-    testTexture.loadFromFile("test.png"); // Will generate checkerboard pattern
 
     // Create player entity
     Entity player = ecs.createEntity();
@@ -104,7 +110,7 @@ int main(int argc, char** argv) {
     playerTransform->scale = Vector2(1.0f, 1.0f);
     
     auto* playerSprite = ecs.addComponent<SpriteComponent>(player);
-    playerSprite->sprite.setTexture(&testTexture);
+    playerSprite->sprite.setTexture(testTexture);
     playerSprite->sprite.setSize(Vector2(64, 64));
     playerSprite->sprite.setColor(Color(0.3f, 0.7f, 1.0f, 1.0f));
 
@@ -116,7 +122,7 @@ int main(int argc, char** argv) {
         transform->position = Vector2(100.0f + i * 120.0f, 100.0f + (i % 2) * 100.0f);
         
         auto* sprite = ecs.addComponent<SpriteComponent>(floater);
-        sprite->sprite.setTexture(&testTexture);
+        sprite->sprite.setTexture(testTexture);
         sprite->sprite.setSize(Vector2(48, 48));
         
         float hue = i / 5.0f;
@@ -134,11 +140,13 @@ int main(int argc, char** argv) {
     SDL_Event event;
     float time = 0.0f;
 
-    std::cout << "=== omega-engine ECS Demo ===" << std::endl;
+    std::cout << "=== omega-engine Asset Manager Demo ===" << std::endl;
     std::cout << "Controls:" << std::endl;
     std::cout << "  WASD / Arrow Keys - Move player" << std::endl;
     std::cout << "  ESC - Quit" << std::endl;
     std::cout << "Entities: " << ecs.getEntities().size() << std::endl;
+    std::cout << "Loaded Textures: " << assets.getTextureCount() << std::endl;
+    std::cout << "Loaded Shaders: " << assets.getShaderCount() << std::endl;
 
     while (running) {
         Input& input = Input::getInstance();
@@ -188,14 +196,14 @@ int main(int argc, char** argv) {
         // Render
         renderer.clear(0.1f, 0.1f, 0.15f, 1.0f);
 
-        // Render all sprites
+        // Render all sprites using the cached shader
         for (Entity entity : ecs.getEntities()) {
             auto* transform = ecs.getComponent<Transform>(entity);
             auto* spriteComp = ecs.getComponent<SpriteComponent>(entity);
             
             if (transform && spriteComp && spriteComp->visible) {
                 spriteComp->sprite.setPosition(transform->position);
-                spriteComp->sprite.draw(&spriteShader, SCREEN_WIDTH, SCREEN_HEIGHT);
+                spriteComp->sprite.draw(spriteShader, SCREEN_WIDTH, SCREEN_HEIGHT);
             }
         }
 
@@ -206,6 +214,9 @@ int main(int argc, char** argv) {
     }
 
     std::cout << "Shutting down..." << std::endl;
+    
+    // Clean up assets (automatic via AssetManager singleton)
+    assets.unloadAll();
 
     SDL_DestroyWindow(window);
     SDL_Quit();
