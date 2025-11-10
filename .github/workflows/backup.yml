@@ -19,7 +19,7 @@ jobs:
           git bundle create repo-backup-$(date +%Y%m%d).bundle --all
           
       - name: Upload backup artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: repository-backup-${{ github.run_number }}
           path: repo-backup-*.bundle
