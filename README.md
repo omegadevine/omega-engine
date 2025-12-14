@@ -310,7 +310,9 @@ Roadmap
 - [x] Complete demo application
 - [x] **ENGINE 100% COMPLETE**
 
-Demo Application
+Demo Applications
+
+### Main Engine Demo
 The included demo showcases:
 - Full UI system with clickable buttons
 - Main menu with Start and Quit buttons
@@ -328,6 +330,32 @@ The included demo showcases:
 - Texture rendering with color tinting
 - Mouse and keyboard input handling
 - Professional UI/UX with visual feedback
+
+### DungeonQuest Demo
+A complete roguelike dungeon crawler game:
+- Procedurally generated dungeons
+- Turn-based combat system
+- Monster AI and behaviors
+- Inventory and equipment system
+- Magic spells and abilities
+- Fast console rendering
+- See `DUNGEON_QUEST.md` for details
+
+### Omega Shooter 3D
+A Wolfenstein 3D-style raycasting first-person shooter:
+- Real-time 3D raycasting engine
+- First-person movement and rotation
+- Enemy AI with pursuit behavior
+- Shooting mechanics and combat
+- Distance-based shading and depth
+- Sprite-based enemy rendering
+- Console-based 3D graphics at 60 FPS
+- Classic id Software-inspired gameplay
+- See `SHOOTER_3D.md` for details
+
+**Run the demos:**
+- `dungeon_quest_v5_balanced.exe` - Roguelike dungeon crawler
+- `shooter_3d.exe` - First-person shooter
 
 Contributing
 See CONTRIBUTING.md
